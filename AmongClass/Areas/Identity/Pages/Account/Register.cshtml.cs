@@ -2,13 +2,14 @@
 using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.UI.Services;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.WebUtilities;
-using Microsoft.Extensions.Logging;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
+using System.Text.Encodings.Web;
 
 namespace AmongClass.Areas.Identity.Pages.Account
 {
@@ -21,6 +22,10 @@ namespace AmongClass.Areas.Identity.Pages.Account
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
         private readonly RoleManager<IdentityRole> _roleManager;
+
+        //custom
+        private readonly RoleManager<IdentityRole> _roleManager;
+
 
         public RegisterModel(
             UserManager<IdentityUser> userManager,
