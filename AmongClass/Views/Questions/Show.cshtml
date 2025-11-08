@@ -1,54 +1,60 @@
 ﻿<div class="d-flex justify-content-center">
-
     <a class="btn btn-outline-success" href="/Questions/Index/">Afisare intrebari</a>
-
     <a class="btn btn-outline-success" href="/Questions/New">Adauga intrebare</a>
-
 </div>
 
 <br />
 
 <div class="card">
-
     <div class="card-body">
-
         <h3 class="card-title alert-success py-3 px-3 rounded-2">@ViewBag.Question.Text</h3>
 
-        <div class="d-flex justify-content-between flex-row mt-5">
+        <hr />
 
+        <h5>Raspunsuri:</h5>
+
+        @if (ViewBag.Answers != null && ViewBag.Answers.Count > 0)
+        {
             @foreach (var a in ViewBag.Answers)
             {
-                <div><i class="bi bi-globe"></i>@a.Text</div>
+                <div class="card mb-2">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="bi bi-globe"></i> @a.Text
+                                <br />
+                                <small class="text-muted">Puncte: @a.Points</small>
+                            </div>
+                            <div>
+                                <a class="btn btn-sm btn-warning" href="/Answers/Edit/@a.Id">Editeaza</a>
+                                <form method="post" action="/Answers/Delete/@a.Id" style="display: inline;">
+                                    <button class="btn btn-sm btn-danger" type="submit"
+                                            onclick="return confirm('Sigur vrei să ștergi acest răspuns?')">
+                                        Sterge
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             }
+        }
+        else
+        {
+            <p class="text-muted">Nu există răspunsuri încă.</p>
+        }
 
-        </div>
-
+        <br />
+        <a class="btn btn-primary" href="/Answers/New?questionId=@ViewBag.Question.Id">Adauga raspuns</a>
     </div>
 
     <hr />
 
     <div class="d-flex flex-row justify-content-between">
-
         <a class="btn btn-success" href="/Questions/Edit/@ViewBag.Question.Id">Editeaza intrebare</a>
 
         <form method="post" action="/Questions/Delete/@ViewBag.Question.Id">
-
             <button class="btn btn-danger" type="submit">Sterge intrebare</button>
-
         </form>
-
     </div>
-
 </div>
-
-<br />
-<br />
-
-
-@* Afisare comentarii impreuna cu butoanele de editare si stergere *@
-
-
-
-
-@* Afisarea formularului in care se poate adauga un comentariu *@
-

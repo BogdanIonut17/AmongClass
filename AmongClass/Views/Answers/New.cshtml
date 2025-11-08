@@ -1,0 +1,21 @@
+﻿@{
+    ViewBag.Title = "Adauga raspuns";
+}
+
+<h2>Adaugare raspuns</h2>
+<br />
+
+<form method="post" action="/Answers/New">
+    <input type="hidden" name="QuestionId" value="@ViewBag.QuestionId" />
+
+    <label>Continut raspuns</label>
+    <textarea name="Text" class="form-control" rows="4"></textarea>
+    <br />
+
+    <label>Puncte</label>
+    <input type="number" name="Points" value="0" class="form-control" />
+    <br />
+
+    <button class="btn btn-success" type="submit">Adauga raspuns</button>
+    <a class="btn btn-secondary" href="/Questions/Show/@ViewBag.QuestionId">Anuleaza</a>
+</form>
