@@ -1,36 +1,54 @@
 ﻿using AmongClass.Data;
 using AmongClass.Models;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace AmongClass.Controllers
 {
-    public class AnswersController(ApplicationDbContext context) : Controller
+    public class AnswersController : Controller
     {
-        private readonly ApplicationDbContext db = context;
+        private readonly ApplicationDbContext db;
+        private readonly UserManager<IdentityUser> _userManager;
+
+        public AnswersController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        {
+            db = context;
+            _userManager = userManager;
+        }
 
         public IActionResult Index()
         {
-            // Include Question pentru a afișa întrebarea asociată fiecărui răspuns
-            var answers = db.Answers.Include(a => a.Question);
+            var answers = db.Answers
+                .Include(a => a.Question)
+                .Include(a => a.Votes);
             ViewBag.Answers = answers;
             return View();
         }
 
+        [Authorize]
         public ActionResult New(Guid questionId)
         {
             ViewBag.QuestionId = questionId;
             return View();
         }
 
+        [Authorize]
         [HttpPost]
-        public ActionResult New(Answer answer)
+        public async Task<IActionResult> New(Answer answer)
         {
             try
             {
-                db.Answers.Add(answer);
-                db.SaveChanges();
-                return RedirectToAction("Show", "Questions", new { id = answer.QuestionId });
+                var currentUser = await _userManager.GetUserAsync(User);
+                if (currentUser != null)
+                {
+                    answer.UserId = Guid.Parse(currentUser.Id);
+                    db.Answers.Add(answer);
+                    db.SaveChanges();
+                    return RedirectToAction("Show", "Questions", new { id = answer.QuestionId });
+                }
+                return Unauthorized();
             }
             catch (Exception e)
             {
