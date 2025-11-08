@@ -1,9 +1,11 @@
 ﻿using Microsoft.AspNetCore.Identity;
+using System.ComponentModel.DataAnnotations;
 
 namespace AmongClass.Models
 {
     public class Vote
     {
+        [Key]
         public Guid Id { get; set; }
         public Guid VoterId { get; set; }
         public required IdentityUser Voter { get; set; }
