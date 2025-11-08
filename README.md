@@ -19,10 +19,9 @@ Elevii tind să dea „copy-paste” din AI fără să citească sau să înțel
 ## 💡 Soluția  
 **Among Class** oferă o experiență interactivă și competitivă între elevi și AI:  
 
-1. Profesorul își creează o lecție sub formă de **slide-uri** cu teorie.  
-2. La finalul lecției, elevii primesc o serie de **întrebări** din lecția curentă și din cele anterioare.  
-3. Fiecare elev scrie propriul **răspuns**, după care aplicația generează automat și un **răspuns AI** la aceeași întrebare.  
-4. Elevii trebuie apoi să **ghicească** care dintre răspunsurile afișate este generat de AI.  
+1. Elevii primesc o serie de **întrebări** din lecțiile anterioare.  
+2. Fiecare elev scrie propriul **răspuns**, după care aplicația generează automat și un **răspuns AI** la aceeași întrebare.  
+3. Elevii trebuie apoi să **ghicească** care dintre răspunsurile afișate este generat de AI.  
    - ✅ Dacă un elev ghicește corect, primește **puncte bonus**;  
    - ❌ Dacă răspunsul unui elev este votat ca fiind de la AI, acesta **pierde puncte**.  
 
@@ -40,15 +39,15 @@ Astfel, elevii sunt motivați să ofere răspunsuri autentice, originale și cre
 ---
 
 ## 🧑‍🏫 Scenariu de utilizare  
-1. Profesorul creează o lecție cu teorie.  
-2. Elevii accesează lecția și răspund la întrebări.  
+1. Profesorul creează un quiz cu teorie.  
+2. Elevii accesează quiz ul și răspund la întrebări.  
 3. După fiecare întrebare, elevii votează care răspuns cred că e generat de AI.  
 4. Clasamentul se actualizează în timp real, creând o **dinamică de tip gamified learning**.  
 
 ---
 
 ## 🌟 De ce „Among Class”?  
-Numele este inspirat din conceptul de „AI impostor” — printre răspunsurile elevilor se ascunde unul scris de AI, iar scopul este să îl identifici!  
+Numele este inspirat din conceptul de „Among us” — printre răspunsurile elevilor se ascunde unul scris de AI, iar scopul este să îl identifici!  
 Este o combinație între **educație**, **gamificare** și **responsabilitate digitală**.
 
 ---
