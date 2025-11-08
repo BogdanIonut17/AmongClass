@@ -12,13 +12,11 @@ namespace AmongClass.Controllers
             _httpClient = httpClientFactory.CreateClient();
         }
 
-        // GET: Ollama
         public IActionResult Index()
         {
             return View();
         }
 
-        // POST: Ollama/Ask
         [HttpPost]
         public async Task<IActionResult> Ask(string prompt)
         {
@@ -30,7 +28,7 @@ namespace AmongClass.Controllers
 
             var ollamaRequest = new
             {
-                model = "llama3.2",
+                model = "phi3",
                 prompt = prompt,
                 stream = false
             };
