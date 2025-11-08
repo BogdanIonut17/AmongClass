@@ -8,7 +8,7 @@ namespace AmongClass.Controllers
     public class QuestionsController(ApplicationDbContext context) : Controller
     {
         private readonly ApplicationDbContext db = context;
-        public IActionResult Index()
+        public ActionResult Index()
         {
             var questions = db.Questions.Include(q => q.Answers);
 
@@ -47,13 +47,13 @@ namespace AmongClass.Controllers
                 return NotFound();
             }
 
-            ViewBag.Article = q;
+            ViewBag.Question = q;
 
             ViewBag.Answers = q.Answers;
 
             return View();
         }
-        public ActionResult Edit(int id)
+        public ActionResult Edit(Guid id)
         {
             Question q = db.Questions.Find(id);
             ViewBag.Question = q;
@@ -80,7 +80,7 @@ namespace AmongClass.Controllers
             }
         }
         [HttpPost]
-        public ActionResult Delete(int id)
+        public ActionResult Delete(Guid id)
         {
             Question q = db.Questions.Find(id);
             db.Questions.Remove(q);

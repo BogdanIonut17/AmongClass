@@ -1,0 +1,54 @@
+﻿<div class="d-flex justify-content-center">
+
+    <a class="btn btn-outline-success" href="/Questions/Index/">Afisare intrebari</a>
+
+    <a class="btn btn-outline-success" href="/Questions/New">Adauga intrebare</a>
+
+</div>
+
+<br />
+
+<div class="card">
+
+    <div class="card-body">
+
+        <h3 class="card-title alert-success py-3 px-3 rounded-2">@ViewBag.Question.Text</h3>
+
+        <div class="d-flex justify-content-between flex-row mt-5">
+
+            @foreach (var a in ViewBag.Answers)
+            {
+                <div><i class="bi bi-globe"></i>@a.Text</div>
+            }
+
+        </div>
+
+    </div>
+
+    <hr />
+
+    <div class="d-flex flex-row justify-content-between">
+
+        <a class="btn btn-success" href="/Questions/Edit/@ViewBag.Question.Id">Editeaza intrebare</a>
+
+        <form method="post" action="/Questions/Delete/@ViewBag.Question.Id">
+
+            <button class="btn btn-danger" type="submit">Sterge intrebare</button>
+
+        </form>
+
+    </div>
+
+</div>
+
+<br />
+<br />
+
+
+@* Afisare comentarii impreuna cu butoanele de editare si stergere *@
+
+
+
+
+@* Afisarea formularului in care se poate adauga un comentariu *@
+

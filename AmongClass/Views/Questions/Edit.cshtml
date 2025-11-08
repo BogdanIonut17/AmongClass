@@ -1,0 +1,16 @@
+﻿@{
+    ViewBag.Title = "Edit";
+}
+
+
+<form method="post" action="/Questions/Edit/@ViewBag.Question.Id">
+
+    <label>Continut intrebare</label>
+    <input type="text" name="Text" value="@ViewBag.Question.Text" />
+    <br /><br />
+
+    <br /><br />
+
+    <button class="btn btn-success" type="submit">Modifica intrebare</button>
+
+</form>
