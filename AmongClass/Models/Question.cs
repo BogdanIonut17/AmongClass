@@ -7,6 +7,6 @@ namespace AmongClass.Models
         [Key]
         public Guid Id { get; set; }
         public string Text { get; set; }
-        //public ICollection<An>
+        public ICollection<Answer> Answers { get; set; }
     }
 }

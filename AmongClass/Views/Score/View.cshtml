@@ -1,0 +1,21 @@
+﻿@model IEnumerable<AmongClass.Models.ViewModels.ScoreViewModel>
+
+<h2>Leaderboard</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Points</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>@item.StudentName</td>
+                <td>@item.Points</td>
+            </tr>
+        }
+    </tbody>
+</table>
