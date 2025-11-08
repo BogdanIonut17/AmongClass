@@ -164,7 +164,7 @@
     <div class="page-header">
         <h1 class="page-title">
             <i class="bi bi-chat-left-text-fill"></i>
-            Răspunsurile Mele
+            Răspunsuri
         </h1>
         <a href="/Questions/Index" class="btn-back">
             <i class="bi bi-arrow-left"></i> Înapoi la întrebări
@@ -189,29 +189,26 @@
                     <a href="/Questions/Show/@answer.QuestionId" class="btn-action btn-view">
                         <i class="bi bi-eye"></i> Vezi întrebarea
                     </a>
-
-                    <div class="actions-right">
-                        <a href="/Answers/Edit/@answer.Id" class="btn-action btn-edit">
-                            <i class="bi bi-pencil"></i> Editează
-                        </a>
-
-                        <form method="post" action="/Answers/Delete/@answer.Id" style="display: inline;">
-                            <button type="submit" class="btn-action btn-delete"
-                                    onclick="return confirm('Sigur vrei să ștergi acest răspuns?')">
-                                <i class="bi bi-trash"></i> Șterge
-                            </button>
-                        </form>
-                    </div>
                 </div>
             </div>
         }
     }
     else
     {
-        <div class="empty-state">
-            <i class="bi bi-inbox"></i>
+        @if (User.IsInRole("Student"))
+        {
+            <div class="empty-state">
+                <i class="bi bi-inbox"></i>
             <h3>Nu ai răspuns la nicio întrebare încă</h3>
             <p>Începe să răspunzi la întrebări pentru a le vedea aici!</p>
-        </div>
+            </div>
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <h3>Nu există răspunsuri la nicio întrebare încă</h3>
+            </div>
+        }
     }
 </div>
