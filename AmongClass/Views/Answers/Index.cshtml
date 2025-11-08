@@ -2,11 +2,11 @@
     ViewBag.Title = "Raspunsuri";
 }
 
-<h2 class="text-center">Afisare raspunsuri</h2>
+<h2 class="text-center">Afișare răspunsuri</h2>
 <br />
 
 <div class="d-flex justify-content-center">
-    <a class="btn btn-outline-success" href="/Questions/Index">Afisare intrebari</a>
+    <a class="btn btn-outline-success" href="/Questions/Index">Afișează întrebările</a>
 </div>
 
 <br />
@@ -15,27 +15,16 @@
 {
     <div class="card">
         <div class="card-body">
-            <h5 class="card-title">Intrebare: @answer.Question.Text</h5>
+            <h5 class="card-title">Întrebare: @answer.Question.Text</h5>
             <hr />
             <div class="card-text">
-                <strong>Raspuns:</strong> @answer.Text
+                <strong>Răspuns:</strong> @answer.Text
             </div>
             </div>
             </div>
 
             <div class="d-flex justify-content-between flex-row mt-3">
-                <a class="btn btn-success" href="/Questions/Show/@answer.QuestionId">Vezi intrebare</a>
-
-                <div>
-                    <a class="btn btn-warning" href="/Answers/Edit/@answer.Id">Editeaza raspuns</a>
-
-                    <form method="post" action="/Answers/Delete/@answer.Id" style="display: inline;">
-                        <button class="btn btn-danger" type="submit"
-                                onclick="return confirm('Sigur vrei să ștergi acest răspuns?')">
-                            Sterge raspuns
-                        </button>
-                    </form>
-                </div>
+                <a class="btn btn-success" href="/Questions/Show/@answer.QuestionId">Vezi întrebare</a>
             </div>
     <br />
 }

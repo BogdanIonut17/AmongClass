@@ -73,6 +73,7 @@ namespace AmongClass.Controllers
             return View();
         }
 
+        // de pe claim-uri verifici user-id ul de pe claim si cu user-id ul de la cine a crea answer-ul
         [HttpPost]
         public IActionResult Edit(Guid id, Answer requestAnswer)
         {

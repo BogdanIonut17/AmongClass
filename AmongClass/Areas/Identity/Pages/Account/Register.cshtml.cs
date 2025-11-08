@@ -10,6 +10,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
 using System.Text.Encodings.Web;
+using Microsoft.AspNetCore.Authorization;
 
 namespace AmongClass.Areas.Identity.Pages.Account
 {
@@ -21,7 +22,7 @@ namespace AmongClass.Areas.Identity.Pages.Account
         private readonly IUserStore<IdentityUser> _userStore;
         private readonly IUserEmailStore<IdentityUser> _emailStore;
         private readonly ILogger<RegisterModel> _logger;
-        private readonly RoleManager<IdentityRole> _roleManager;
+        //private readonly RoleManager<IdentityRole> _roleManager;
 
         //custom
         private readonly RoleManager<IdentityRole> _roleManager;

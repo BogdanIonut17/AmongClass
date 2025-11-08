@@ -5,12 +5,12 @@
 
 <form method="post" action="/Questions/Edit/@ViewBag.Question.Id">
 
-    <label>Continut intrebare</label>
-    <input type="text" name="Text" value="@ViewBag.Question.Text" />
+    <label>Conținut întrebare</label>
+    <textarea name="Text" class="form-control" rows="4">@ViewBag.Question.Text</textarea>
     <br /><br />
 
     <br /><br />
 
-    <button class="btn btn-success" type="submit">Modifica intrebare</button>
+    <button class="btn btn-success" type="submit">Modifică întrebarea</button>
 
 </form>
