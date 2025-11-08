@@ -1,4 +1,5 @@
 ﻿using AmongClass.Data;
+using AmongClass.Helpers;
 using AmongClass.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
@@ -10,12 +11,14 @@ namespace AmongClass.Controllers
     public class AnswersController : Controller
     {
         private readonly ApplicationDbContext db;
+        private readonly RagService _rag;
         private readonly UserManager<IdentityUser> _userManager;
 
-        public AnswersController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
+        public AnswersController(ApplicationDbContext context, UserManager<IdentityUser> userManager, RagService rag)
         {
             db = context;
             _userManager = userManager;
+            _rag = rag;
         }
 
         public IActionResult Index()
@@ -38,24 +41,39 @@ namespace AmongClass.Controllers
         [HttpPost]
         public async Task<IActionResult> New(Answer answer)
         {
-            try
+            if (!ModelState.IsValid) return View(answer);
+
+            answer.Id = Guid.NewGuid();
+            answer.UserId = Guid.Parse(User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value);
+            db.Answers.Add(answer);
+            await db.SaveChangesAsync();
+
+            // Generează răspuns AI în fundal
+            _ = Task.Run(async () =>
             {
-                var currentUser = await _userManager.GetUserAsync(User);
-                if (currentUser != null)
+                try
                 {
-                    answer.UserId = Guid.Parse(currentUser.Id);
-                    db.Answers.Add(answer);
-                    db.SaveChanges();
-                    return RedirectToAction("Show", "Questions", new { id = answer.QuestionId });
+                    string questionText = answer.Question.Text;
+                    string aiResponseText = await _rag.GetRelevantRules(questionText); // sau alt prompt personalizat pentru AI
+                    var aiAnswer = new Answer
+                    {
+                        Id = Guid.NewGuid(),
+                        Text = aiResponseText,
+                        QuestionId = answer.QuestionId,
+                        UserId = Guid.Empty, // sau un ID special care semnifică AI
+                    };
+                    db.Answers.Add(aiAnswer);
+                    await db.SaveChangesAsync();
                 }
-                return Unauthorized();
-            }
-            catch (Exception e)
-            {
-                ViewBag.QuestionId = answer.QuestionId;
-                return View();
-            }
+                catch
+                {
+                    // Poți loga eroarea, dar nu întrerupe procesul principal
+                }
+            });
+
+            return RedirectToAction("Show", "Questions", new { id = answer.QuestionId });
         }
+
 
         public ActionResult Edit(Guid id)
         {

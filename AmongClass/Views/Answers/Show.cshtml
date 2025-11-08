@@ -81,6 +81,12 @@
         border-top: 1px solid #334155;
     }
 
+    .ai-answer {
+        border-color: #facc15;
+        background: rgba(250, 204, 21, 0.1);
+    }
+
+
     .btn {
         padding: 0.5rem 1rem;
         border-radius: 6px;
@@ -179,24 +185,38 @@
     {
         @foreach (var answer in ViewBag.Answers)
         {
-            <div class="answer-item">
+            bool isAI = answer.UserId == Guid.Empty; // AI-ul are UserId gol
+
+
+            <div class="answer-item @(isAI ? "ai-answer" : "")">
                 <div class="answer-text">
                     @answer.Text
                 </div>
 
                 <div class="answer-actions">
-                    <a href="/Answers/Edit/@answer.Id" class="btn btn-edit">
-                        <i class="bi bi-pencil"></i> Editează
-                    </a>
+                    @if (!isAI)
+                    {
+                        <a href="/Answers/Edit/@answer.Id" class="btn btn-edit">
+                            <i class="bi bi-pencil"></i> Editează
+                        </a>
 
-                    <form method="post" action="/Answers/Delete/@answer.Id" style="display: inline;">
-                        <button type="submit" class="btn btn-delete"
-                                onclick="return confirm('Sigur vrei să ștergi acest răspuns?')">
-                            <i class="bi bi-trash"></i> Șterge
-                        </button>
-                    </form>
+                        <form method="post" action="/Answers/Delete/@answer.Id" style="display: inline;">
+                            <button type="submit" class="btn btn-delete"
+                                    onclick="return confirm('Sigur vrei să ștergi acest răspuns?')">
+                                <i class="bi bi-trash"></i> Șterge
+                            </button>
+                        </form>
+                    }
+                    @if (isAI)
+                    {
+                        <span class="badge bg-warning" style="margin-left: auto;">
+                            🤖 AI
+                        </span>
+                    }
                 </div>
             </div>
+
+            @* </div> *@
         }
     }
     else
