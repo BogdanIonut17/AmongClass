@@ -212,11 +212,6 @@
                             <i class="bi bi-chat-dots"></i> Răspunsuri
                         </a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Questions/New">
-                            <i class="bi bi-plus-circle"></i> Nouă
-                        </a>
-                    </li>
 
                     @if (SignInManager.IsSignedIn(User))
                     {
@@ -233,11 +228,13 @@
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                    <form method="post" action="/Identity/Account/Logout" style="display: inline;">
-                                        <button type="submit" class="dropdown-item text-danger" style="background: none; border: none; width: 100%; text-align: left;">
+                                <li>
+                                    <form method="post" asp-area="Identity" asp-page="/Account/Logout">
+                                        <button type="submit" class="dropdown-item" style="background: none; border: none; width: 100%; text-align: left; color: #ef4444;">
                                             <i class="bi bi-box-arrow-right"></i> Logout
                                         </button>
                                     </form>
+                                </li>
                                 </li>
                             </ul>
                         </li>
