@@ -1,0 +1,38 @@
+﻿@model AmongClass.Models.Question
+
+<h2>@ViewBag.Question.Text</h2>
+
+<h3>Răspunsuri</h3>
+
+@if (ViewBag.Answers != null && ViewBag.Answers.Count > 0)
+{
+    <div class="answers-list">
+        @foreach (var answer in ViewBag.Answers)
+        {
+            <div class="card mb-3">
+                <div class="card-body">
+                    <p>@answer.Text</p>
+                    <small class="text-muted">Puncte: @answer.Points</small>
+
+                    <div class="mt-2">
+                        <a href="/Answers/Edit/@answer.Id" class="btn btn-sm btn-warning">Editează</a>
+
+                        <form method="post" action="/Answers/Delete/@answer.Id" style="display: inline;">
+                            <button type="submit" class="btn btn-sm btn-danger"
+                                    onclick="return confirm('Sigur vrei să ștergi acest răspuns?')">
+                                Șterge
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p class="text-muted">Nu există răspunsuri încă.</p>
+}
+
+<a href="/Answers/New?questionId=@ViewBag.Question.Id" class="btn btn-success">Adaugă Răspuns</a>
+<a href="/Questions/Index" class="btn btn-secondary">Înapoi la Întrebări</a>
