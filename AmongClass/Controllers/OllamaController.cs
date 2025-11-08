@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AmongClass.Helpers;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 
 namespace AmongClass.Controllers
@@ -6,10 +7,12 @@ namespace AmongClass.Controllers
     public class OllamaController : Controller
     {
         private readonly HttpClient _httpClient;
+        private readonly SimpleRagService _rag;
 
-        public OllamaController(IHttpClientFactory httpClientFactory)
+        public OllamaController(IHttpClientFactory httpClientFactory, SimpleRagService rag)
         {
             _httpClient = httpClientFactory.CreateClient();
+            _rag = rag;
         }
 
         public IActionResult Index()
@@ -26,14 +29,17 @@ namespace AmongClass.Controllers
                 return View("Index");
             }
 
-            var ollamaRequest = new
+            string rules = await _rag.GetRelevantRules(prompt);
+            string fullPrompt = $"Rules:\n{rules}\n\nQuestion: {prompt}";
+
+            var request = new
             {
-                model = "phi3",
-                prompt = prompt,
+                model = "gwen2.5",
+                prompt = fullPrompt,
                 stream = false
             };
 
-            var response = await _httpClient.PostAsJsonAsync("http://localhost:11434/api/generate", ollamaRequest);
+            var response = await _httpClient.PostAsJsonAsync("http://localhost:11434/api/generate", request);
 
             if (!response.IsSuccessStatusCode)
             {
@@ -43,7 +49,6 @@ namespace AmongClass.Controllers
             }
 
             var json = await response.Content.ReadAsStringAsync();
-
             using var doc = JsonDocument.Parse(json);
             string modelResponse = doc.RootElement.GetProperty("response").GetString();
 

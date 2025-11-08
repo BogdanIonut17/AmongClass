@@ -1,4 +1,5 @@
 using AmongClass.Data;
+using AmongClass.Helpers;
 using AmongClass.IRepository;
 using AmongClass.Repository;
 using Mapster;
@@ -17,13 +18,22 @@ builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.Requ
     .AddEntityFrameworkStores<ApplicationDbContext>();
 builder.Services.AddControllersWithViews();
 
+
 //custom
+
+
+builder.Services.AddSingleton<SimpleRagService>();
 builder.Services.AddMapster();
 builder.Services.AddHttpClient();
+
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
+
+//custom
+var rag = app.Services.GetRequiredService<SimpleRagService>();
+await rag.InitAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
