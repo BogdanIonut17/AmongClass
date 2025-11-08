@@ -3,82 +3,172 @@
 }
 
 <style>
-    .answer-form {
+    .new-container {
+        max-width: 900px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+    }
+
+    .new-card {
         background: #1e293b;
         border: 2px solid #334155;
         border-radius: 16px;
-        padding: 2rem;
-        max-width: 900px;
-        margin: 0 auto;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
     }
-
-        .answer-form h2 {
-            color: #f1f5f9;
-            margin-bottom: 2rem;
-        }
-
-    .custom-textarea-answer {
-        background: #0f172a;
-        border: 2px solid #334155;
-        border-radius: 12px;
-        color: #f1f5f9;
-        padding: 1.25rem;
-        width: 100%;
-        font-size: 1.15rem;
-        min-height: 200px;
-        transition: all 0.3s ease;
-    }
-
-        .custom-textarea-answer:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-            background: #1e293b;
-        }
-
-        .custom-textarea-answer::placeholder {
-            color: #64748b;
-        }
 
     .warning-box {
         background: rgba(239, 68, 68, 0.1);
         border: 2px solid #ef4444;
-        border-radius: 12px;
+        border-left: 4px solid #ef4444;
+        border-radius: 8px;
         padding: 1.25rem;
-        margin-bottom: 1.5rem;
-        color: #fecaca;
+        margin-bottom: 2rem;
     }
 
         .warning-box h5 {
             color: #f87171;
+            font-weight: 600;
             margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .warning-box p {
+            color: #fecaca;
+            margin: 0;
+        }
+
+    .new-title {
+        color: #f1f5f9;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+        .new-title i {
+            color: #10b981;
+        }
+
+    .form-textarea {
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 8px;
+        color: #f1f5f9;
+        padding: 1rem;
+        width: 100%;
+        font-size: 1.05rem;
+        min-height: 200px;
+        transition: all 0.3s ease;
+        font-family: inherit;
+        resize: vertical;
+    }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+            background: #1e293b;
+        }
+
+        .form-textarea::placeholder {
+            color: #64748b;
+        }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 1.05rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        flex: 1;
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+    .btn-cancel {
+        background: #334155;
+        color: #cbd5e1;
+    }
+
+        .btn-cancel:hover {
+            background: #475569;
+            color: #f1f5f9;
+        }
+
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 1rem;
+        background: #334155;
+        color: #cbd5e1;
+        border-radius: 6px;
+        text-decoration: none;
+        font-weight: 600;
+        margin-bottom: 2rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-back:hover {
+            background: #475569;
+            color: #f1f5f9;
         }
 </style>
 
-<a href="/Questions/Show/@ViewBag.QuestionId" class="btn btn-secondary mb-4">
-    <i class="bi bi-arrow-left"></i> Înapoi
-</a>
+<div class="new-container">
+    <a href="/Questions/Show/@ViewBag.QuestionId" class="btn-back">
+        <i class="bi bi-arrow-left"></i> Înapoi
+    </a>
 
-<div class="answer-form">
-    <div class="warning-box">
-        <h5>⚠️ Atenție!</h5>
-        <p class="mb-0">Colegii tăi vor încerca să ghicească dacă răspunsul tău este generat de AI. Fii creativ!</p>
-    </div>
-
-    <h2><i class="bi bi-pencil-fill"></i> Scrie răspunsul tău</h2>
-
-    <form method="post" action="/Answers/New">
-        <input type="hidden" name="QuestionId" value="@ViewBag.QuestionId" />
-
-        <textarea name="Text" class="custom-textarea-answer" placeholder="Scrie răspunsul aici..." required></textarea>
-
-        <div class="d-flex gap-3 mt-4">
-            <button type="submit" class="btn btn-success btn-lg flex-grow-1">
-                <i class="bi bi-send-fill"></i> Trimite
-            </button>
-            <a href="/Questions/Show/@ViewBag.QuestionId" class="btn btn-secondary btn-lg">
-                <i class="bi bi-x-circle"></i> Anulează
-            </a>
+    <div class="new-card">
+        <div class="warning-box">
+            <h5><i class="bi bi-exclamation-triangle-fill"></i> Atenție!</h5>
+            <p>Colegii tăi vor încerca să ghicească dacă răspunsul tău este generat de AI. Fii creativ și original!</p>
         </div>
-    </form>
+
+        <h2 class="new-title">
+            <i class="bi bi-pencil-fill"></i>
+            Scrie răspunsul tău
+        </h2>
+
+        <form method="post" action="/Answers/New">
+            <input type="hidden" name="QuestionId" value="@ViewBag.QuestionId" />
+
+            <textarea name="Text" class="form-textarea" placeholder="Scrie răspunsul tău aici... Fii creativ!" required></textarea>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-submit">
+                    <i class="bi bi-send-fill"></i> Trimite răspunsul
+                </button>
+                <a href="/Questions/Show/@ViewBag.QuestionId" class="btn btn-cancel">
+                    <i class="bi bi-x-circle"></i> Anulează
+                </a>
+            </div>
+        </form>
+    </div>
 </div>

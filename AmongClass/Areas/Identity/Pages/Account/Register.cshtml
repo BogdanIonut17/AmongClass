@@ -1,78 +1,364 @@
 ﻿@page
 @model RegisterModel
 @{
-    ViewData["Title"] = "Register";
+    ViewData["Title"] = "Creare cont";
 }
 
-<h1>@ViewData["Title"]</h1>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
+<div class="register-full-center">
+    <div class="register-form-container">
+
+        <div class="text-center mb-5">
+            <div class="avatar-icon-lg mb-3">
+                <i class="bi bi-person-plus"></i>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
+            <h2 class="text-white mb-2 title-main">Creare cont</h2>
+            <p class="text-secondary subtitle-text">Alătură-te comunității Among Class pentru a începe.</p>
+        </div>
+
+        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-clean-style">
+            <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+            <div class="mb-4">
+                <label class="form-label-clean" asp-for="Input.Email">
+                    <i class="bi bi-envelope"></i> Email
+                </label>
+                <input asp-for="Input.Email" class="form-control-clean"
+                       autocomplete="username" aria-required="true"
+                       placeholder="exemplu@email.com" />
+                <span asp-validation-for="Input.Email" class="text-danger validation-message"></span>
             </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+
+            <div class="mb-4">
+                <label class="form-label-clean" asp-for="Input.Password">
+                    <i class="bi bi-lock"></i> Parolă
+                </label>
+                <input asp-for="Input.Password" class="form-control-clean"
+                       type="password" autocomplete="new-password" aria-required="true"
+                       placeholder="Minim 6 caractere" />
+                <span asp-validation-for="Input.Password" class="text-danger validation-message"></span>
             </div>
-            <div class="form-floating mb-3">
-                <select asp-for="Input.Role" class="form-control">
-                    <option value="">-- Select role --</option>
-                    <option value="Student">Student</option>
-                    <option value="Teacher">Teacher</option>
-                </select>
-                <label asp-for="Input.Role">Role</label>
-                <span asp-validation-for="Input.Role" class="text-danger"></span>
+
+            <div class="mb-4">
+                <label class="form-label-clean" asp-for="Input.ConfirmPassword">
+                    <i class="bi bi-lock-fill"></i> Confirmă parola
+                </label>
+                <input asp-for="Input.ConfirmPassword" class="form-control-clean"
+                       type="password" autocomplete="new-password" aria-required="true"
+                       placeholder="Rescrie parola" />
+                <span asp-validation-for="Input.ConfirmPassword" class="text-danger validation-message"></span>
             </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">
-                                article
-                                about setting up this ASP.NET application to support logging in via external services
-                            </a>.
-                        </p>
-                    </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
+
+            <div class="mb-5">
+                <label class="form-label-clean mb-3 role-title-label">
+                    <i class="bi bi-person-badge"></i> <strong>Selectează rolul</strong>
+                </label>
+                <div class="role-selection-grid">
+
+                    <label class="role-card-minimal" for="roleStudent">
+                        <input type="radio" name="Input.Role" id="roleStudent" value="Student" checked />
+                        <div class="role-content">
+                            <i class="bi bi-book role-icon-minimal"></i>
+                            <strong class="role-title">Student</strong>
+                            <i class="bi bi-check-circle-fill role-checkmark-minimal"></i>
                         </div>
-                    </form>
-                }
-            }
-        </section>
+                    </label>
+
+                    <label class="role-card-minimal" for="roleTeacher">
+                        <input type="radio" name="Input.Role" id="roleTeacher" value="Teacher" />
+                        <div class="role-content">
+                            <i class="bi bi-mortarboard role-icon-minimal"></i>
+                            <strong class="role-title">Profesor</strong>
+                            <i class="bi bi-check-circle-fill role-checkmark-minimal"></i>
+                        </div>
+                    </label>
+
+                </div>
+                <span asp-validation-for="Input.Role" class="text-danger validation-message"></span>
+            </div>
+
+            <button id="registerSubmit" type="submit" class="btn btn-primary-gradient w-100 mb-4">
+                <i class="bi bi-person-fill-add"></i> <strong>Creează cont</strong>
+            </button>
+
+            <div class="text-center">
+                <p class="text-secondary mb-0">
+                    Ai deja cont?
+                    <a href="/Identity/Account/Login" class="link-styled">
+                        Autentifică-te
+                    </a>
+                </p>
+            </div>
+        </form>
+
+        <div class="text-center mt-5">
+            <a href="/" class="link-back-home">
+                <i class="bi bi-arrow-left"></i> Înapoi la pagina principală
+            </a>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <style>
+        /* ========================================= */
+        /* 1. VARIABILE GLOBALE & FOND NOU */
+        /* ========================================= */
+        :root {
+            --primary-color: #4f46e5; /* Indigo/Violet */
+            --secondary-color: #6366f1; /* Indigo deschis */
+            --background-dark: #0f172a; /* Culoare de fundal principală */
+            --input-bg: rgba(30, 41, 59, 0.7); /* Fundal input subtil */
+            --border-default: rgba(100, 116, 139, 0.3); /* Border gri-albăstrui */
+            --text-light: #f8fafc; /* Text foarte deschis */
+            --text-secondary: #94a3b8; /* Text gri pentru detalii */
+            --success-color: #10b981; /* Verde pentru succes */
+            --danger-color: #ef4444; /* Roșu pentru erori */
+        }
+
+        body {
+            background-color: var(--background-dark);
+            color: var(--text-light);
+            font-family: 'Inter', sans-serif;
+        }
+
+        /* ========================================= */
+        /* 2. STILURI DE LAYOUT: CENTRARE, FĂRĂ CUTIE */
+        /* ========================================= */
+        .register-full-center {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 3rem 1rem;
+            /* Păstrăm gradientul subtil pe fundalul paginii */
+            background-image: radial-gradient(at 0% 0%, rgba(30, 41, 59, 0.5) 0%, transparent 50%), radial-gradient(at 100% 100%, rgba(47, 56, 75, 0.5) 0%, transparent 50%);
+        }
+
+        .register-form-container {
+            max-width: 450px;
+            width: 100%;
+            /* NU MAI ARE FUNDAL SAU UMBRĂ */
+        }
+
+        /* Titluri și subtitluri */
+        .title-main {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+
+        .subtitle-text {
+            font-size: 1rem;
+            color: var(--text-secondary);
+        }
+
+        /* AVATAR / ICONIȚĂ - Păstrat pentru estetică */
+        .avatar-icon-lg {
+            display: inline-flex;
+            width: 60px;
+            height: 60px;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary-color);
+            border-radius: 50%;
+            box-shadow: 0 0 0 5px rgba(79, 70, 229, 0.2);
+        }
+
+            .avatar-icon-lg i {
+                font-size: 1.8rem;
+                color: var(--text-light);
+            }
+
+        /* ========================================= */
+        /* 3. ELEMENTE DE FORMULAR - CLEAN & MINIMALIST */
+        /* ========================================= */
+        .form-label-clean {
+            color: var(--text-secondary);
+            font-weight: 500;
+            display: block;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            font-size: 0.95rem;
+        }
+
+        .role-title-label {
+            color: var(--text-light); /* Facem titlul pentru rol mai vizibil */
+            font-weight: 600;
+        }
+
+        .form-label-clean i {
+            color: var(--secondary-color);
+            margin-right: 0.5rem;
+        }
+
+        .form-control-clean {
+            width: 100%;
+            /* Folosim fundal transparent sau foarte închis */
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-default);
+            color: var(--text-light);
+            border-radius: 8px;
+            padding: 10px 15px;
+            transition: all 0.2s;
+            font-size: 1rem;
+        }
+
+            .form-control-clean:focus {
+                background-color: rgba(30, 41, 59, 0.9);
+                border-color: var(--primary-color);
+                box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.4);
+                outline: none;
+            }
+
+            .form-control-clean::placeholder {
+                color: var(--text-secondary);
+                opacity: 0.7;
+            }
+
+        .validation-message {
+            display: block;
+            margin-top: 0.25rem;
+            font-size: 0.85rem;
+        }
+
+        /* CULOARE PENTRU ALERTĂ FĂRĂ FUNDAL PUTERNIC */
+        .alert-danger {
+            background: transparent;
+            border: 1px solid var(--danger-color);
+            border-radius: 8px;
+            color: var(--danger-color);
+            padding: 1rem;
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        /* 4. BUTON DE ACȚIUNE */
+        .btn-primary-gradient {
+            background: linear-gradient(90deg, var(--primary-color) 0%, var(--secondary-color) 100%);
+            border: none;
+            color: white;
+            padding: 12px 20px;
+            font-size: 1rem;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(79, 70, 229, 0.5);
+            text-transform: uppercase;
+        }
+
+            .btn-primary-gradient:hover {
+                box-shadow: 0 6px 20px rgba(79, 70, 229, 0.7);
+                transform: translateY(-1px);
+                opacity: 0.95;
+            }
+
+        /* 5. SELECTOR DE ROL - ACUM E DOAR UN BORDER SUBTIL */
+        .role-selection-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        .role-card-minimal {
+            background-color: transparent; /* Fără fundal de card */
+            border: 1px solid var(--border-default); /* Doar un border fin */
+            border-radius: 10px;
+            padding: 1rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            display: block;
+        }
+
+            .role-card-minimal:hover {
+                border-color: var(--primary-color);
+                background-color: rgba(30, 41, 59, 0.3); /* Fundal foarte subtil la hover */
+            }
+
+            .role-card-minimal input[type="radio"] {
+                position: absolute;
+                opacity: 0;
+                pointer-events: none;
+            }
+
+        .role-content {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .role-icon-minimal {
+            font-size: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .role-title {
+            font-weight: 700;
+            font-size: 1rem;
+            color: var(--text-light);
+            flex-grow: 1;
+            margin-left: 0.75rem;
+        }
+
+        /* Starea SELECTATĂ */
+        .role-card-minimal:has(input[type="radio"]:checked) {
+            border-color: var(--success-color);
+            background-color: rgba(16, 185, 129, 0.15); /* Fundal foarte subtil de succes */
+            box-shadow: 0 0 10px rgba(16, 185, 129, 0.3);
+        }
+
+            .role-card-minimal:has(input[type="radio"]:checked) .role-icon-minimal {
+                color: var(--success-color);
+            }
+
+        .role-checkmark-minimal {
+            color: var(--success-color);
+            opacity: 0;
+            transition: opacity 0.2s;
+            font-size: 1.25rem;
+        }
+
+        .role-card-minimal:has(input[type="radio"]:checked) .role-checkmark-minimal {
+            opacity: 1;
+        }
+
+        /* 6. LINK-URI DE NAVIGARE */
+        .link-styled {
+            color: var(--secondary-color);
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+            .link-styled:hover {
+                color: var(--primary-color);
+                text-decoration: underline;
+            }
+
+        .link-back-home {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 0.9rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            transition: color 0.2s;
+        }
+
+            .link-back-home:hover {
+                color: var(--text-light);
+            }
+
+        /* Media Queries pentru mobil */
+        @@media (max-width: 576px) {
+            .role-selection-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
 }

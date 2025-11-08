@@ -1,19 +1,132 @@
 ﻿@{
-    ViewBag.Title = "Editeaza raspuns";
+    ViewBag.Title = "Editează Răspuns";
 }
 
-<h2>Editare raspuns</h2>
-<br />
+<style>
+    .edit-container {
+        max-width: 800px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+    }
 
-<form method="post" action="/Answers/Edit/@ViewBag.Answer.Id">
-    <label>Continut raspuns</label>
-    <textarea name="Text" class="form-control" rows="4">@ViewBag.Answer.Text</textarea>
-    <br />
+    .edit-card {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
 
-    <label>Puncte</label>
-    <input type="number" name="Points" value="@ViewBag.Answer.Points" class="form-control" />
-    <br />
+    .edit-title {
+        color: #f1f5f9;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
 
-    <button class="btn btn-success" type="submit">Modifica raspuns</button>
-    <a class="btn btn-secondary" href="/Questions/Show/@ViewBag.Answer.QuestionId">Anuleaza</a>
-</form>
+        .edit-title i {
+            color: #3b82f6;
+        }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: #cbd5e1;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+    .form-control {
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 8px;
+        color: #f1f5f9;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            background: #1e293b;
+        }
+
+    textarea.form-control {
+        resize: vertical;
+        min-height: 150px;
+        font-family: inherit;
+    }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+    }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+    .btn-secondary {
+        background: #334155;
+        color: #cbd5e1;
+    }
+
+        .btn-secondary:hover {
+            background: #475569;
+            color: #f1f5f9;
+        }
+</style>
+
+<div class="edit-container">
+    <div class="edit-card">
+        <h1 class="edit-title">
+            <i class="bi bi-pencil-square"></i>
+            Editare Răspuns
+        </h1>
+
+        <form method="post" action="/Answers/Edit/@ViewBag.Answer.Id">
+            <div class="form-group">
+                <label for="Text" class="form-label">Conținut răspuns</label>
+                <textarea name="Text" id="Text" class="form-control" rows="6" required>@ViewBag.Answer.Text</textarea>
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-circle"></i> Salvează modificările
+                </button>
+                <a href="/Questions/Show/@ViewBag.Answer.QuestionId" class="btn btn-secondary">
+                    <i class="bi bi-x-circle"></i> Anulează
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,41 +1,217 @@
 ﻿@{
-    ViewBag.Title = "Raspunsuri";
+    ViewBag.Title = "Răspunsurile Mele";
 }
 
-<h2 class="text-center">Afisare raspunsuri</h2>
-<br />
+<style>
+    .index-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
 
-<div class="d-flex justify-content-center">
-    <a class="btn btn-outline-success" href="/Questions/Index">Afisare intrebari</a>
-</div>
+    .page-header {
+        text-align: center;
+        margin-bottom: 3rem;
+    }
 
-<br />
+    .page-title {
+        color: #f1f5f9;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
 
-@foreach (var answer in ViewBag.Answers)
-{
-    <div class="card">
-        <div class="card-body">
-            <h5 class="card-title">Intrebare: @answer.Question.Text</h5>
-            <hr />
-            <div class="card-text">
-                <strong>Raspuns:</strong> @answer.Text
-            </div>
-            </div>
-            </div>
+        .page-title i {
+            color: #3b82f6;
+        }
 
-            <div class="d-flex justify-content-between flex-row mt-3">
-                <a class="btn btn-success" href="/Questions/Show/@answer.QuestionId">Vezi intrebare</a>
+    .btn-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: #334155;
+        color: #cbd5e1;
+        border-radius: 8px;
+        text-decoration: none;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
 
-                <div>
-                    <a class="btn btn-warning" href="/Answers/Edit/@answer.Id">Editeaza raspuns</a>
+        .btn-back:hover {
+            background: #475569;
+            color: #f1f5f9;
+            transform: translateY(-2px);
+        }
 
-                    <form method="post" action="/Answers/Delete/@answer.Id" style="display: inline;">
-                        <button class="btn btn-danger" type="submit"
-                                onclick="return confirm('Sigur vrei să ștergi acest răspuns?')">
-                            Sterge raspuns
-                        </button>
-                    </form>
+    .answer-card {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 12px;
+        padding: 1.75rem;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .answer-card:hover {
+            border-color: #3b82f6;
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
+        }
+
+    .question-ref {
+        color: #94a3b8;
+        font-size: 0.95rem;
+        margin-bottom: 0.75rem;
+        font-weight: 600;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .question-ref i {
+            color: #3b82f6;
+        }
+
+    .answer-text {
+        color: #e2e8f0;
+        font-size: 1.05rem;
+        line-height: 1.6;
+        margin: 1rem 0;
+        padding: 1rem;
+        background: #0f172a;
+        border-radius: 8px;
+        border-left: 3px solid #3b82f6;
+    }
+
+    .card-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        margin-top: 1.5rem;
+        padding-top: 1rem;
+        border-top: 1px solid #334155;
+    }
+
+    .btn-action {
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 0.9rem;
+    }
+
+    .btn-view {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+    }
+
+        .btn-view:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+        }
+
+    .btn-edit {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+    }
+
+        .btn-edit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
+        }
+
+    .btn-delete {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+    }
+
+        .btn-delete:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
+        }
+
+    .actions-right {
+        display: flex;
+        gap: 0.75rem;
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #64748b;
+    }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+</style>
+
+<div class="index-container">
+    <div class="page-header">
+        <h1 class="page-title">
+            <i class="bi bi-chat-left-text-fill"></i>
+            Răspunsurile Mele
+        </h1>
+        <a href="/Questions/Index" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Înapoi la întrebări
+        </a>
+    </div>
+
+    @if (ViewBag.Answers != null && ((IEnumerable<dynamic>)ViewBag.Answers).Any())
+    {
+        @foreach (var answer in ViewBag.Answers)
+        {
+            <div class="answer-card">
+                <div class="question-ref">
+                    <i class="bi bi-question-circle"></i>
+                    @answer.Question.Text
+                </div>
+
+                <div class="answer-text">
+                    @answer.Text
+                </div>
+
+                <div class="card-actions">
+                    <a href="/Questions/Show/@answer.QuestionId" class="btn-action btn-view">
+                        <i class="bi bi-eye"></i> Vezi întrebarea
+                    </a>
+
+                    <div class="actions-right">
+                        <a href="/Answers/Edit/@answer.Id" class="btn-action btn-edit">
+                            <i class="bi bi-pencil"></i> Editează
+                        </a>
+
+                        <form method="post" action="/Answers/Delete/@answer.Id" style="display: inline;">
+                            <button type="submit" class="btn-action btn-delete"
+                                    onclick="return confirm('Sigur vrei să ștergi acest răspuns?')">
+                                <i class="bi bi-trash"></i> Șterge
+                            </button>
+                        </form>
+                    </div>
                 </div>
             </div>
-    <br />
-}
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h3>Nu ai răspuns la nicio întrebare încă</h3>
+            <p>Începe să răspunzi la întrebări pentru a le vedea aici!</p>
+        </div>
+    }
+</div>
