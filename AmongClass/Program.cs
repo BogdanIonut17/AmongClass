@@ -19,6 +19,7 @@ builder.Services.AddControllersWithViews();
 
 //custom
 builder.Services.AddMapster();
+builder.Services.AddHttpClient();
 
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
