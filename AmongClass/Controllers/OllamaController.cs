@@ -34,7 +34,7 @@ namespace AmongClass.Controllers
 
             var request = new
             {
-                model = "llama3.2:3b",
+                model = "qwen2.5",
                 prompt = fullPrompt,
                 stream = false
             };
