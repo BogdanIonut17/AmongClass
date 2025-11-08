@@ -228,9 +228,8 @@
                                 </li>
                                 <li><hr class="dropdown-divider"></li>
                                 <li>
-                                <li>
-                                    <form method="post" asp-area="Identity" asp-page="/Account/Logout">
-                                        <button type="submit" class="dropdown-item" style="background: none; border: none; width: 100%; text-align: left; color: #ef4444;">
+                                    <form method="post" action="/Identity/Account/Logout" style="display: inline;">
+                                        <button type="submit" class="dropdown-item text-danger" style="background: none; border: none; width: 100%; text-align: left;">
                                             <i class="bi bi-box-arrow-right"></i> Logout
                                         </button>
                                     </form>

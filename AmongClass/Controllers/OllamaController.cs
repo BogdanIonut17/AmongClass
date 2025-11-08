@@ -7,9 +7,9 @@ namespace AmongClass.Controllers
     public class OllamaController : Controller
     {
         private readonly HttpClient _httpClient;
-        private readonly SimpleRagService _rag;
+        private readonly RagService _rag;
 
-        public OllamaController(IHttpClientFactory httpClientFactory, SimpleRagService rag)
+        public OllamaController(IHttpClientFactory httpClientFactory, RagService rag)
         {
             _httpClient = httpClientFactory.CreateClient();
             _rag = rag;
@@ -34,7 +34,7 @@ namespace AmongClass.Controllers
 
             var request = new
             {
-                model = "gwen2.5",
+                model = "qwen2.5",
                 prompt = fullPrompt,
                 stream = false
             };

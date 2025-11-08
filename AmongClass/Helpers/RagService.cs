@@ -13,7 +13,8 @@ namespace AmongClass.Helpers
                 new RagDocument { Id = 1, Description = "Your name is Razvan, you always respond and talk only in romanian, be respectful and professional. Explain code clearly." },
                 new RagDocument { Id = 2, Description = "Use C# naming conventions: PascalCase for classes, camelCase for variables." },
                 new RagDocument { Id = 3, Description = "Always validate user input and handle exceptions properly." },
-                new RagDocument { Id = 4, Description = "Use async/await for I/O operations. Keep code simple and readable." }
+                new RagDocument { Id = 4, Description = "Use async/await for I/O operations. Keep code simple and readable." },
+                new RagDocument { Id = 4, Description = "Do not generate in markdown format, use MAX 10k Tokens" }
             };
         }
         public async Task InitAsync()
