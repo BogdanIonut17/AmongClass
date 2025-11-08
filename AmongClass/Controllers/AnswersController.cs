@@ -68,7 +68,6 @@ namespace AmongClass.Controllers
                 }
 
                 answer.Text = requestAnswer.Text;
-                answer.Points = requestAnswer.Points;
                 db.SaveChanges();
 
                 return RedirectToAction("Show", "Questions", new { id = answer.QuestionId });

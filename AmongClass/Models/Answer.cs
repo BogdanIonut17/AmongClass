@@ -12,7 +12,6 @@ namespace AmongClass.Models
         public Question Question { get; set; }
         public Guid UserId { get; set; }
         public IdentityUser User { get; set; }
-        public int Points { get; set; }
         public ICollection<Vote> Votes { get; set; }
     }
 }
