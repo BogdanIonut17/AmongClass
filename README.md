@@ -39,15 +39,6 @@ Astfel, elevii sunt motivați să ofere răspunsuri autentice, originale și cre
 
 ---
 
-## 🧩 Tehnologii propuse  
-- **Frontend:** React / Next.js  
-- **Backend:** Node.js / Express  
-- **Bază de date:** MongoDB / PostgreSQL  
-- **AI Integration:** OpenAI API / Gemini API  
-- **Auth & Scoring:** Firebase / Supabase  
-
----
-
 ## 🧑‍🏫 Scenariu de utilizare  
 1. Profesorul creează o lecție cu teorie.  
 2. Elevii accesează lecția și răspund la întrebări.  
