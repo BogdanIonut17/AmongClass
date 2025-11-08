@@ -1,0 +1,35 @@
+﻿@{
+    ViewData["Title"] = "Ollama Chat";
+}
+<h2>Chat with Ollama</h2>
+@if (!string.IsNullOrEmpty(ViewBag.Error))
+{
+    <div class="alert alert-danger">
+        @ViewBag.Error
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.Prompt))
+{
+    <div class="card mb-3">
+        <div class="card-header">Your Question:</div>
+        <div class="card-body">
+            @ViewBag.Prompt
+        </div>
+    </div>
+}
+@if (!string.IsNullOrEmpty(ViewBag.ModelResponse))
+{
+    <div class="card mb-3">
+        <div class="card-header">Ollama Response:</div>
+        <div class="card-body">
+            @ViewBag.ModelResponse
+        </div>
+    </div>
+}
+<form asp-action="Ask" asp-controller="Ollama" method="post">
+    <div class="form-group">
+        <label for="prompt">Enter your prompt:</label>
+        <textarea class="form-control" id="prompt" name="prompt" rows="4" required></textarea>
+    </div>
+    <button type="submit" class="btn btn-primary mt-2">Ask Ollama</button>
+</form>
