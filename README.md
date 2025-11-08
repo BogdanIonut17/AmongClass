@@ -62,19 +62,4 @@ Este o combinație între **educație**, **gamificare** și **responsabilitate d
 
 ---
 
-## 🧭 Obiective viitoare  
-- Adăugarea unui sistem de **badge-uri și niveluri**;  
-- Generarea automată de **statistici de progres** pentru profesori;  
-- Integrarea cu platforme educaționale existente (Google Classroom, Moodle);  
-- Versiune mobilă (PWA).  
 
----
-
-## 👥 Echipa  
-- **[Numele tău / Echipa]** – Ideea, dezvoltare, implementare.  
-- (Poți adăuga colegii cu roluri: UI/UX, backend, AI integration, etc.)
-
----
-
-## 📜 Licență  
-Acest proiect este realizat în scop educațional pentru hackathon și este open-source sub licența MIT.
