@@ -1,0 +1,30 @@
+﻿@model IEnumerable<AmongClass.Models.Session>
+
+<h2>Available Sessions</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Teacher</th>
+            <th>Category</th>
+            <th>Action</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var session in Model)
+        {
+            <tr>
+                <td>@session.Name</td>
+                <td>@session.Teacher?.UserName</td>
+                @* <td>@session.Category?.Name</td> *@
+                <td>
+                    <form asp-action="Join" method="post">
+                        <input type="hidden" name="sessionId" value="@session.Id" />
+                        <button type="submit" class="btn btn-primary btn-sm">Join</button>
+                    </form>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

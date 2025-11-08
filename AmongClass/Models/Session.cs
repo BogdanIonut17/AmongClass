@@ -13,6 +13,7 @@ namespace AmongClass.Models
         public Guid TeacherId { get; set; }
 
         public IdentityUser<Guid> Teacher { get; set; }
+        public ICollection<SessionStudent> SessionStudents { get; set; } = new List<SessionStudent>();
 
         public ICollection<Score> Scores { get; set; } = new List<Score>();
     }

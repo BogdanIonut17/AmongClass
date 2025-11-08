@@ -18,6 +18,7 @@ namespace AmongClass.Data
         public DbSet<Vote> Votes { get; set; }
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Question> Questions { get; set; }
+        public DbSet<SessionStudent> SessionStudents { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)
