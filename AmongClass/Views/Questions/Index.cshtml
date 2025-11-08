@@ -15,9 +15,12 @@
     <a class="btn btn-success-modern btn-modern mx-2" href="/Answers/Index">
         <i class="bi bi-chat-dots-fill"></i> Afișare răspunsuri
     </a>
-    <a class="btn btn-primary-modern btn-modern mx-2" href="/Questions/New">
-        <i class="bi bi-plus-circle-fill"></i> Adaugă întrebare
-    </a>
+    @if (User.IsInRole("Teacher"))
+    {
+        <a class="btn btn-primary-modern btn-modern mx-2" href="/Questions/New">
+            <i class="bi bi-plus-circle-fill"></i> Adaugă întrebare
+        </a>
+    }
 </div>
 
 <div class="row g-4">
@@ -71,10 +74,12 @@
 {
     <div class="text-center py-5">
         <i class="bi bi-inbox" style="font-size: 5rem; color: var(--text-secondary);"></i>
-        <h3 class="mt-3 text-secondary">Nu există întrebări încă</h3>
-        <p class="text-secondary">Fii primul care adaugă o întrebare!</p>
-        <a class="btn btn-primary-modern btn-modern mt-3" href="/Questions/New">
-            <i class="bi bi-plus-circle"></i> Adaugă prima întrebare
-        </a>
+        @if (User.IsInRole("Teacher"))
+        {
+            <h3 class="mt-3 text-secondary">Nu există întrebări încă</h3>
+            <p class="text-secondary">Fii primul care adaugă o întrebare!</p>
+            <a class="btn btn-primary-modern btn-modern mt-3" href="/Questions/New">
+                <i class="bi bi-plus-circle"></i> Adaugă prima întrebare</a>
+        }
     </div>
 }
