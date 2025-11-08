@@ -147,6 +147,27 @@ namespace AmongClass.Data.Migrations
                     b.ToTable("Sessions");
                 });
 
+            modelBuilder.Entity("AmongClass.Models.SessionStudent", b =>
+                {
+                    b.Property<Guid>("SessionId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SessionId1")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("StudentId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("SessionId");
+
+                    b.HasIndex("SessionId1");
+
+                    b.HasIndex("StudentId");
+
+                    b.ToTable("SessionStudents");
+                });
+
             modelBuilder.Entity("AmongClass.Models.Vote", b =>
                 {
                     b.Property<Guid>("Id")
@@ -488,6 +509,25 @@ namespace AmongClass.Data.Migrations
                     b.Navigation("Teacher");
                 });
 
+            modelBuilder.Entity("AmongClass.Models.SessionStudent", b =>
+                {
+                    b.HasOne("AmongClass.Models.Session", "Session")
+                        .WithMany("SessionStudents")
+                        .HasForeignKey("SessionId1")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser<System.Guid>", "Student")
+                        .WithMany()
+                        .HasForeignKey("StudentId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Session");
+
+                    b.Navigation("Student");
+                });
+
             modelBuilder.Entity("AmongClass.Models.Vote", b =>
                 {
                     b.HasOne("AmongClass.Models.Answer", "Answer")
@@ -571,6 +611,8 @@ namespace AmongClass.Data.Migrations
             modelBuilder.Entity("AmongClass.Models.Session", b =>
                 {
                     b.Navigation("Scores");
+
+                    b.Navigation("SessionStudents");
                 });
 #pragma warning restore 612, 618
         }
