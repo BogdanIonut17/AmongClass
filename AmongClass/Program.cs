@@ -1,4 +1,4 @@
-using AmongClass.Data;
+﻿using AmongClass.Data;
 using AmongClass.Helpers;
 using AmongClass.IRepository;
 using AmongClass.Repository;
@@ -14,25 +14,31 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(connectionString));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true)
+// MODIFICAT: Schimbă RequireConfirmedAccount la false pentru a nu cere confirmare email
+builder.Services.AddDefaultIdentity<IdentityUser>(options =>
+{
+    options.SignIn.RequireConfirmedAccount = false;  // SCHIMBAT de la true la false
+    // Configurări opționale pentru parole mai simple în development
+    options.Password.RequireDigit = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequireLowercase = false;
+})
     .AddRoles<IdentityRole>()
     .AddEntityFrameworkStores<ApplicationDbContext>();
+
 builder.Services.AddControllersWithViews();
 
-
 //custom
-
-
 builder.Services.AddSingleton<RagService>();
 builder.Services.AddMapster();
 builder.Services.AddHttpClient();
-
-
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
 
-//custom
+//custom - Seed roles
 using (var scope = app.Services.CreateScope())
 {
     var serviceProvider = scope.ServiceProvider;
@@ -52,9 +58,6 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-
-
-
 //var rag = app.Services.GetRequiredService<RagService>();
 //await rag.InitAsync();
 
@@ -72,9 +75,7 @@ else
 
 app.UseHttpsRedirection();
 app.UseRouting();
-
 app.UseAuthorization();
-
 app.MapStaticAssets();
 
 app.MapControllerRoute(

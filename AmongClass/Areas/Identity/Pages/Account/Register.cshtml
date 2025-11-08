@@ -4,64 +4,165 @@
     ViewData["Title"] = "Register";
 }
 
-<h1>@ViewData["Title"]</h1>
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<IdentityUser> SignInManager
 
-<div class="row">
-    <div class="col-md-4">
-        <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
-            <h2>Create a new account.</h2>
-            <hr />
-            <div asp-validation-summary="ModelOnly" class="text-danger" role="alert"></div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Email" class="form-control" autocomplete="username" aria-required="true" placeholder="name@example.com" />
-                <label asp-for="Input.Email">Email</label>
-                <span asp-validation-for="Input.Email" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.Password" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.Password">Password</label>
-                <span asp-validation-for="Input.Password" class="text-danger"></span>
-            </div>
-            <div class="form-floating mb-3">
-                <input asp-for="Input.ConfirmPassword" class="form-control" autocomplete="new-password" aria-required="true" placeholder="password" />
-                <label asp-for="Input.ConfirmPassword">Confirm Password</label>
-                <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button id="registerSubmit" type="submit" class="w-100 btn btn-lg btn-primary">Register</button>
-        </form>
-    </div>
-    <div class="col-md-6 col-md-offset-2">
-        <section>
-            <h3>Use another service to register.</h3>
-            <hr />
-            @{
-                if ((Model.ExternalLogins?.Count ?? 0) == 0)
-                {
-                    <div>
-                        <p>
-                            There are no external authentication services configured. See this <a href="https://go.microsoft.com/fwlink/?LinkID=532715">article
-                            about setting up this ASP.NET application to support logging in via external services</a>.
+<div class="mb-4">
+    <a class="btn btn-outline-modern btn-modern" href="/">
+        <i class="bi bi-arrow-left"></i> Înapoi acasă
+    </a>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
+        <div class="card-modern">
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="bi bi-person-plus-fill" style="font-size: 4rem; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent;"></i>
+                    <h2 class="text-white mt-3">Creare cont</h2>
+                    <p class="text-secondary">Alătură-te comunității Among Class</p>
+                </div>
+
+                <form id="registerForm" asp-route-returnUrl="@Model.ReturnUrl" method="post">
+                    <div asp-validation-summary="ModelOnly" class="text-danger mb-3" role="alert"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label-modern" asp-for="Input.Email">
+                            <i class="bi bi-envelope"></i> Email
+                        </label>
+                        <input asp-for="Input.Email" class="form-control-modern"
+                               autocomplete="username" aria-required="true"
+                               placeholder="exemplu@email.com" />
+                        <span asp-validation-for="Input.Email" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label-modern" asp-for="Input.Password">
+                            <i class="bi bi-lock"></i> Parolă
+                        </label>
+                        <input asp-for="Input.Password" class="form-control-modern"
+                               autocomplete="new-password" aria-required="true"
+                               placeholder="Minim 6 caractere" />
+                        <span asp-validation-for="Input.Password" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label-modern" asp-for="Input.ConfirmPassword">
+                            <i class="bi bi-lock-fill"></i> Confirmă parola
+                        </label>
+                        <input asp-for="Input.ConfirmPassword" class="form-control-modern"
+                               autocomplete="new-password" aria-required="true"
+                               placeholder="Rescrie parola" />
+                        <span asp-validation-for="Input.ConfirmPassword" class="text-danger"></span>
+                    </div>
+
+                    <!-- Selecție Rol -->
+                    <div class="mb-4">
+                        <label class="form-label-modern">
+                            <i class="bi bi-person-badge"></i> Selectează rolul
+                        </label>
+                        <div class="role-selection">
+                            <div class="form-check role-card mb-2">
+                                <input class="form-check-input" type="radio" name="Input.Role"
+                                       id="roleStudent" value="Student" checked />
+                                <label class="form-check-label role-label" for="roleStudent">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-book role-icon me-3"></i>
+                                        <div>
+                                            <strong class="text-white">Student</strong>
+                                            <br />
+                                            <small class="text-secondary">Răspund la întrebări și votez</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+
+                            <div class="form-check role-card">
+                                <input class="form-check-input" type="radio" name="Input.Role"
+                                       id="roleTeacher" value="Teacher" />
+                                <label class="form-check-label role-label" for="roleTeacher">
+                                    <div class="d-flex align-items-center">
+                                        <i class="bi bi-mortarboard role-icon me-3"></i>
+                                        <div>
+                                            <strong class="text-white">Profesor</strong>
+                                            <br />
+                                            <small class="text-secondary">Creez întrebări și moderez</small>
+                                        </div>
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button id="registerSubmit" type="submit" class="btn btn-success-modern btn-modern w-100 mb-3">
+                        <i class="bi bi-check-circle"></i> Creează cont
+                    </button>
+
+                    <div class="text-center">
+                        <p class="text-secondary">
+                            Ai deja cont?
+                            <a href="/Identity/Account/Login" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">
+                                Login aici
+                            </a>
                         </p>
                     </div>
-                }
-                else
-                {
-                    <form id="external-account" asp-page="./ExternalLogin" asp-route-returnUrl="@Model.ReturnUrl" method="post" class="form-horizontal">
-                        <div>
-                            <p>
-                                @foreach (var provider in Model.ExternalLogins!)
-                                {
-                                    <button type="submit" class="btn btn-primary" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.DisplayName</button>
-                                }
-                            </p>
-                        </div>
-                    </form>
-                }
-            }
-        </section>
+                </form>
+            </div>
+        </div>
     </div>
 </div>
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+
+    <style>
+        .role-selection {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .role-card {
+            background: rgba(30, 41, 59, 0.6);
+            border: 2px solid rgba(139, 92, 246, 0.2);
+            border-radius: 12px;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+            .role-card:hover {
+                border-color: rgba(139, 92, 246, 0.5);
+                background: rgba(30, 41, 59, 0.8);
+            }
+
+            .role-card input[type="radio"]:checked + .role-label {
+                color: var(--primary-color);
+            }
+
+            .role-card input[type="radio"]:checked ~ * {
+                border-color: var(--primary-color);
+            }
+
+            .role-card:has(input[type="radio"]:checked) {
+                border-color: var(--primary-color);
+                background: rgba(102, 126, 234, 0.1);
+            }
+
+        .role-label {
+            width: 100%;
+            cursor: pointer;
+            margin: 0;
+            padding: 0.5rem;
+        }
+
+        .role-icon {
+            font-size: 2rem;
+            color: var(--primary-color);
+        }
+
+        .form-check-input {
+            display: none;
+        }
+    </style>
 }

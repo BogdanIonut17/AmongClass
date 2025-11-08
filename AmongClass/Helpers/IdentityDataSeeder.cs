@@ -6,33 +6,61 @@ namespace AmongClass.Helpers
     {
         public static async Task SeedRolesAsync(IServiceProvider serviceProvider)
         {
-            if (serviceProvider == null) throw new ArgumentNullException(nameof(serviceProvider));
-
             var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
-            //var logger = serviceProvider.GetService<ILogger<IdentityDataSeeder>>();
 
-            string[] roles = new[] { "Admin", "Student", "Teacher" };
+            // Lista de roluri de creat
+            string[] roleNames = { "Student", "Teacher", "Admin" };
 
-            foreach (var roleName in roles)
+            foreach (var roleName in roleNames)
             {
-                try
+                // Verifică dacă rolul există
+                var roleExist = await roleManager.RoleExistsAsync(roleName);
+
+                if (!roleExist)
                 {
-                    var exists = await roleManager.RoleExistsAsync(roleName);
-                    if (!exists)
+                    // Creează rolul dacă nu există
+                    var roleResult = await roleManager.CreateAsync(new IdentityRole(roleName));
+
+                    if (roleResult.Succeeded)
                     {
-                        var result = await roleManager.CreateAsync(new IdentityRole(roleName));
-                        if (!result.Succeeded)
-                        {
-                            var errors = string.Join("; ", result.Errors.Select(e => e.Description));
-                            //logger?.LogError("Failed to create role '{Role}': {Errors}", roleName, errors);
-                        }
+                        Console.WriteLine($"Role '{roleName}' created successfully.");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"Error creating role '{roleName}'");
                     }
                 }
-                catch (Exception ex)
+            }
+        }
+
+        // Opțional: Metodă pentru a crea un user admin default
+        public static async Task SeedAdminUserAsync(IServiceProvider serviceProvider)
+        {
+            var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+            string adminEmail = "admin@amongclass.com";
+            string adminPassword = "Admin123!";
+
+            // Verifică dacă adminul există
+            var adminUser = await userManager.FindByEmailAsync(adminEmail);
+
+            if (adminUser == null)
+            {
+                // Creează adminul
+                var newAdmin = new IdentityUser
                 {
-                    //logger?.LogError(ex, "Exception while ensuring role '{Role}' exists.", roleName);
-                    // Rethrow so caller (Program.cs) can handle/log if desired
-                    throw;
+                    UserName = adminEmail,
+                    Email = adminEmail,
+                    EmailConfirmed = true
+                };
+
+                var createAdmin = await userManager.CreateAsync(newAdmin, adminPassword);
+
+                if (createAdmin.Succeeded)
+                {
+                    // Adaugă adminul la rolul Admin
+                    await userManager.AddToRoleAsync(newAdmin, "Admin");
+                    Console.WriteLine($"Admin user created: {adminEmail}");
                 }
             }
         }
