@@ -13,15 +13,21 @@ namespace AmongClass.Controllers
         private readonly ApplicationDbContext db;
         private readonly RagService _rag;
         private readonly UserManager<IdentityUser> _userManager;
+        private readonly IServiceProvider _serviceProvider;
 
         // GUID constant pentru AI - va fi același în toată aplicația
         public static readonly string AI_USER_ID = "11111111-1111-1111-1111-111111111111";
 
-        public AnswersController(ApplicationDbContext context, UserManager<IdentityUser> userManager, RagService rag)
+        public AnswersController(
+            ApplicationDbContext context,
+            UserManager<IdentityUser> userManager,
+            RagService rag,
+            IServiceProvider serviceProvider)
         {
             db = context;
             _userManager = userManager;
             _rag = rag;
+            _serviceProvider = serviceProvider;
 
             // Asigură-te că user-ul AI există în baza de date
             EnsureAiUserExists().Wait();
@@ -29,27 +35,47 @@ namespace AmongClass.Controllers
 
         private async Task EnsureAiUserExists()
         {
-            var aiUser = await _userManager.FindByIdAsync(AI_USER_ID);
-
-            if (aiUser == null)
+            try
             {
-                // Creează user-ul AI
-                aiUser = new IdentityUser
-                {
-                    Id = AI_USER_ID,
-                    UserName = "AI_Assistant",
-                    Email = "ai@amongclass.system",
-                    EmailConfirmed = true,
-                    LockoutEnabled = false,
-                    // Nu poate face login - nu are parolă
-                };
+                var aiUser = await _userManager.FindByIdAsync(AI_USER_ID);
 
-                var result = await _userManager.CreateAsync(aiUser);
-
-                if (result.Succeeded)
+                if (aiUser == null)
                 {
-                    Console.WriteLine("✓ AI User created successfully");
+                    Console.WriteLine("🤖 Creating AI User...");
+
+                    aiUser = new IdentityUser
+                    {
+                        Id = AI_USER_ID,
+                        UserName = "AI_Assistant",
+                        Email = "ai@amongclass.system",
+                        EmailConfirmed = true,
+                        LockoutEnabled = false,
+                    };
+
+                    var result = await _userManager.CreateAsync(aiUser);
+
+                    if (result.Succeeded)
+                    {
+                        Console.WriteLine("✅ AI User created successfully!");
+                    }
+                    else
+                    {
+                        Console.WriteLine($"❌ Failed to create AI User:");
+                        foreach (var error in result.Errors)
+                        {
+                            Console.WriteLine($"   - {error.Description}");
+                        }
+                    }
                 }
+                else
+                {
+                    Console.WriteLine("✅ AI User already exists");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error ensuring AI user exists: {ex.Message}");
+                Console.WriteLine($"Stack: {ex.StackTrace}");
             }
         }
 
@@ -81,30 +107,73 @@ namespace AmongClass.Controllers
             db.Answers.Add(answer);
             await db.SaveChangesAsync();
 
-            // Generează răspuns AI în fundal
+            Console.WriteLine($"✅ User answer saved for question {answer.QuestionId}");
+
+            // Generează răspuns AI în fundal - CU SCOPE NOU!
             var questionId = answer.QuestionId;
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    var question = await db.Questions.FindAsync(questionId);
-                    if (question != null)
+                    Console.WriteLine($"🤖 Starting AI answer generation for question {questionId}...");
+
+                    // Așteaptă puțin ca răspunsul user-ului să fie complet salvat
+                    await Task.Delay(500);
+
+                    // IMPORTANT: Creează un scope NOU pentru background task
+                    using var scope = _serviceProvider.CreateScope();
+                    var scopedDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+                    var scopedRag = scope.ServiceProvider.GetRequiredService<RagService>();
+
+                    // Verifică dacă AI-ul a răspuns deja
+                    var existingAiAnswer = await scopedDb.Answers
+                        .FirstOrDefaultAsync(a => a.QuestionId == questionId && a.UserId == AI_USER_ID);
+
+                    if (existingAiAnswer != null)
                     {
-                        string aiResponseText = await _rag.GetRelevantRules(question.Text);
-                        var aiAnswer = new Answer
-                        {
-                            Id = Guid.NewGuid(),
-                            Text = aiResponseText,
-                            QuestionId = questionId,
-                            UserId = AI_USER_ID
-                        };
-                        db.Answers.Add(aiAnswer);
-                        await db.SaveChangesAsync();
+                        Console.WriteLine($"⚠️ AI already answered question {questionId}, skipping");
+                        return;
                     }
+
+                    // Obține întrebarea
+                    var question = await scopedDb.Questions.FindAsync(questionId);
+                    if (question == null)
+                    {
+                        Console.WriteLine($"❌ Question {questionId} not found");
+                        return;
+                    }
+
+                    Console.WriteLine($"📝 Question text: {question.Text}");
+                    Console.WriteLine($"🧠 Calling RAG service...");
+
+                    // Generează răspunsul AI
+                    string aiResponseText = await scopedRag.GetRelevantRules(question.Text);
+
+                    Console.WriteLine($"✅ RAG response received: {aiResponseText.Substring(0, Math.Min(100, aiResponseText.Length))}...");
+
+                    // Creează răspunsul AI
+                    var aiAnswer = new Answer
+                    {
+                        Id = Guid.NewGuid(),
+                        Text = aiResponseText,
+                        QuestionId = questionId,
+                        UserId = AI_USER_ID
+                    };
+
+                    scopedDb.Answers.Add(aiAnswer);
+                    await scopedDb.SaveChangesAsync();
+
+                    Console.WriteLine($"✅ AI answer saved successfully for question {questionId}!");
                 }
                 catch (Exception ex)
                 {
-                    Console.WriteLine($"Error generating AI answer: {ex.Message}");
+                    Console.WriteLine($"❌ Error generating AI answer:");
+                    Console.WriteLine($"   Message: {ex.Message}");
+                    Console.WriteLine($"   Stack: {ex.StackTrace}");
+                    if (ex.InnerException != null)
+                    {
+                        Console.WriteLine($"   Inner: {ex.InnerException.Message}");
+                    }
                 }
             });
 
