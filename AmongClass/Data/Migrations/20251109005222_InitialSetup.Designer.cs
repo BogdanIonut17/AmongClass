@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AmongClass.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251109003050_GuidToString")]
-    partial class GuidToString
+    [Migration("20251109005222_InitialSetup")]
+    partial class InitialSetup
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
