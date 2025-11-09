@@ -68,8 +68,8 @@ using (var scope = app.Services.CreateScope())
     await DbInitializer.SeedAiUser(userManager);
 }
 
-//var rag = app.Services.GetRequiredService<RagService>();
-//await rag.InitAsync();
+var rag = app.Services.GetRequiredService<RagService>();
+await rag.InitAsync();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())

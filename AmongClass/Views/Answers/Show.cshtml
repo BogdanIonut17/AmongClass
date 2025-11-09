@@ -1,4 +1,5 @@
 ﻿@model AmongClass.Models.Question
+@using AmongClass.Controllers
 
 @{
     ViewData["Title"] = ViewBag.Question.Text;
@@ -79,13 +80,27 @@
         gap: 0.75rem;
         padding-top: 1rem;
         border-top: 1px solid #334155;
+        align-items: center;
     }
 
     .ai-answer {
         border-color: #facc15;
-        background: rgba(250, 204, 21, 0.1);
+        background: linear-gradient(135deg, rgba(250, 204, 21, 0.1) 0%, rgba(250, 204, 21, 0.05) 100%);
+        position: relative;
     }
 
+    .ai-badge {
+        background: linear-gradient(135deg, #facc15 0%, #f59e0b 100%);
+        color: #1e293b;
+        padding: 0.5rem 1rem;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: auto;
+    }
 
     .btn {
         padding: 0.5rem 1rem;
@@ -185,8 +200,7 @@
     {
         @foreach (var answer in ViewBag.Answers)
         {
-            bool isAI = answer.UserId == Guid.Empty;
-
+            bool isAI = AnswersController.IsAiAnswer(answer.UserId);
 
             <div class="answer-item @(isAI ? "ai-answer" : "")">
                 <div class="answer-text">
@@ -207,10 +221,11 @@
                             </button>
                         </form>
                     }
+
                     @if (isAI)
                     {
-                        <span class="badge bg-warning" style="margin-left: auto;">
-                            🤖 AI
+                        <span class="ai-badge">
+                            🤖 Răspuns AI
                         </span>
                     }
                 </div>
