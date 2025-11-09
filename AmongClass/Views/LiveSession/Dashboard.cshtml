@@ -7,7 +7,6 @@
 }
 
 <style>
-    /* STILURILE TALE CSS RĂMÂN NESCHIMBATE */
     .btn-back-light {
         background: rgba(255, 255, 255, 0.2);
         color: white;
@@ -254,7 +253,7 @@
             <p class="mt-2 text-white-50">Sesiunea este 🟢 Activă.</p>
         </div>
         <div class="col-md-6 text-md-end">
-            <form method="post" id="endSessionForm" action="/LiveSession/EndSession/@Model.Id" onsubmit="return confirm('Sigur vrei să închei sesiunea?')" style="display: inline-block;">
+            <form method="post" id="endSessionForm" action="/LiveSession/EndSession/@Model.Id" style="display: inline-block;">
                 @Html.AntiForgeryToken()
                 <button type="submit" class="btn-danger">
                     <i class="bi bi-stop-fill"></i>
@@ -362,7 +361,6 @@
 
                     <div class="mt-3">
                         @{
-                            // Determinăm dacă este ultima întrebare pentru a schimba butonul
                             var sq = Model.SessionQuestions.FirstOrDefault(x => x.QuestionId == currentQuestion.Id);
                             var isLastQuestion = !Model.SessionQuestions.Any(x => x.Order > (sq?.Order ?? 0));
                         }
@@ -371,7 +369,7 @@
                         {
                             <form method="post" id="endSessionManualForm" action="/LiveSession/EndSession/@Model.Id">
                                 @Html.AntiForgeryToken()
-                                <button type="submit" class="btn-danger" onclick="return confirm('ATENȚIE: Aceasta este ultima întrebare. Sigur vrei să închei sesiunea?')">
+                                <button type="submit" class="btn-danger">
                                     <i class="bi bi-stop-fill"></i> Finalizează Sesiunea
                                 </button>
                             </form>
@@ -416,10 +414,8 @@
                             @:if (remainingMs > 0 && remainingMs < 600000) {
                             @:    setTimeout(function() {
                             @:        if (isLast) {
-                            @:            // Declanseaza formularul nou (Manual Form)
                             @:            document.getElementById('endSessionManualForm').submit();
                             @:        } else {
-                            @:            // Declanseaza formularul NextQuestion
                             @:            document.getElementById('nextQuestionForm').submit();
                             @:        }
                             @:    }, remainingMs);
@@ -428,7 +424,6 @@
             }
     }
 
-    // Păstrează reîncărcarea pentru actualizarea scorurilor/stării la fiecare 3 secunde
     setTimeout(function() {
         location.reload();
     }, 3000);
