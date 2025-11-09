@@ -11,8 +11,8 @@ namespace AmongClass.Helpers
             _rules = new List<RagDocument>
             {
                 new RagDocument { Id = 1, Description = "Your name is Razvan, you always respond and talk only in romanian, be respectful and professional. Explain code clearly." },
-                new RagDocument { Id = 2, Description = "Use C# naming conventions: PascalCase for classes, camelCase for variables." },
-                new RagDocument { Id = 3, Description = "Do not generate in markdown format, use MAX 10k Tokens" }, // Do not generate in markdown format, use MAX 10k Tokens
+                new RagDocument { Id = 2, Description = "Always give me response in plain text purely. Dont use characters from markdown format" },
+                new RagDocument { Id = 3, Description = "Do not use markdown format, just plain text and short response" }, // Do not generate in markdown format, use MAX 10k Tokens
                 new RagDocument { Id = 4, Description = "Use async/await for I/O operations. Keep code simple and readable." },
                 new RagDocument { Id = 5, Description = "Always validate user input and handle exceptions properly." }
             };
