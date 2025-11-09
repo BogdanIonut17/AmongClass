@@ -25,7 +25,7 @@ namespace AmongClass.Models
 
         public IdentityUser Teacher { get; set; }
         public ICollection<SessionStudent> SessionStudents { get; set; }
-        public ICollection<Score> Scores { get; set; }
+        public ICollection<Score> Scores { get; set; } = new List<Score>();
         public ICollection<SessionQuestion> SessionQuestions { get; set; }
     }
 

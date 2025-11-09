@@ -68,21 +68,6 @@ namespace AmongClass.Data.Migrations
                     b.ToTable("Answers");
                 });
 
-            modelBuilder.Entity("AmongClass.Models.Category", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
-                });
-
             modelBuilder.Entity("AmongClass.Models.Question", b =>
                 {
                     b.Property<Guid>("Id")

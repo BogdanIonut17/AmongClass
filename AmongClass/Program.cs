@@ -1,8 +1,5 @@
 ﻿using AmongClass.Data;
 using AmongClass.Helpers;
-using AmongClass.IRepository;
-using AmongClass.Models;
-using AmongClass.Repository;
 using Mapster;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -35,7 +32,7 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddSingleton<RagService>();
 builder.Services.AddMapster();
 builder.Services.AddHttpClient();
-builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
+//builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
 var app = builder.Build();
 

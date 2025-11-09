@@ -95,6 +95,113 @@ namespace AmongClass.Controllers
             return View(session);
         }
 
+        [HttpPost]
+        [Authorize(Roles = "Teacher")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> StartSession(Guid id)
+        {
+            var session = await _context.Sessions
+                .Include(s => s.SessionQuestions) // Include întrebările pentru a seta CurrentQuestionId
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (session == null)
+                return NotFound();
+
+            if (session.Status == SessionStatus.Inactive)
+            {
+                session.Status = SessionStatus.Active;
+                // Setează prima întrebare ca fiind activă, dacă există
+                session.CurrentQuestionId = session.SessionQuestions
+                    .OrderBy(sq => sq.Order)
+                    .FirstOrDefault()?.QuestionId;
+
+                await _context.SaveChangesAsync();
+            }
+
+            // Redirecționează către noua pagină de monitorizare/administrare
+            return RedirectToAction(nameof(Dashboard), new { id = session.Id });
+        }
+
+        // ===========================
+        // Profesor: Dashboard Sesiune Live
+        // ===========================
+        [HttpGet]
+        [Authorize(Roles = "Teacher")]
+        public async Task<IActionResult> Dashboard(Guid id)
+        {
+            // LiveSessionController.cs
+
+            var session = await _context.Sessions
+                // 1. Incarcă scorurile (nu este necesară filtrarea aici)
+                .Include(s => s.Scores)
+                    .ThenInclude(sc => sc.Student)
+
+                // 2. Incarcă toate SessionQuestions (nu aplica filtrare complexă aici)
+                .Include(s => s.SessionQuestions)
+                    .ThenInclude(sq => sq.Question)
+
+                // 3. Filtrează entitatea principală
+                .FirstOrDefaultAsync(s => s.Id == id);
+
+            if (session == null || session.Status != SessionStatus.Active)
+            {
+                // Dacă sesiunea nu există sau nu este activă, redirecționează către lista de sesiuni
+                return RedirectToAction(nameof(Index));
+            }
+
+            // Continuarea codului din LiveSessionController.cs Dashboard
+
+            // Găsește ID-ul întrebării curente
+            var currentQuestionId = session.CurrentQuestionId;
+
+            if (currentQuestionId.HasValue)
+            {
+                // Încarcă Întrebarea Curentă împreună cu Răspunsurile și Utilizatorii Răspunsurilor
+                var currentQuestion = await _context.Questions
+                    .Where(q => q.Id == currentQuestionId.Value)
+                    .Include(q => q.Answers)
+                        .ThenInclude(a => a.User) // Încarcă utilizatorul care a dat răspunsul
+                    .Include(q => q.Answers)
+                        .ThenInclude(a => a.Votes) // Încarcă voturile pentru răspuns
+                    .FirstOrDefaultAsync();
+
+                ViewBag.CurrentQuestion = currentQuestion;
+            }
+            else
+            {
+                ViewBag.CurrentQuestion = null;
+            }
+
+            // Sortează scorurile studenților
+            ViewBag.Scores = session.Scores
+                .OrderByDescending(s => s.Points)
+                .ToList();
+
+            return View(session);
+        }
+
+        [HttpPost]
+        [Authorize(Roles = "Teacher")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> EndSession(Guid id)
+        {
+            var session = await _context.Sessions.FindAsync(id);
+
+            if (session == null)
+                return NotFound();
+
+            if (session.Status == SessionStatus.Active)
+            {
+                session.Status = SessionStatus.Completed;
+                // Opțional: resetează CurrentQuestionId
+                session.CurrentQuestionId = null;
+                await _context.SaveChangesAsync();
+            }
+
+            // Redirecționează către pagina de rezultate (Score/Index) sau înapoi la lista de sesiuni
+            return RedirectToAction(nameof(Index));
+        }
+
         // ... (Alte metode pentru profesor: AddQuestion, RemoveQuestion, etc. sunt lăsate neschimbate)
         // Metoda Join este cea cu majoritatea erorilor de tipologie.
 
@@ -166,31 +273,45 @@ namespace AmongClass.Controllers
         // ===========================
         [HttpGet]
         [Authorize(Roles = "Student")]
+        // LiveSessionController.cs
+
+        [HttpGet]
+        [Authorize(Roles = "Student")]
         public async Task<IActionResult> Play(Guid id)
         {
-            // ❌ EROARE CORECTATĂ: studentId este string (CS0029)
+            // Obține ID-ul studentului (string)
             var studentId = _userManager.GetUserId(User)!;
 
+            // 1. Interogarea Sesiunii: Include toate relațiile necesare
             var session = await _context.Sessions
                 .Include(s => s.SessionQuestions)
                     .ThenInclude(sq => sq.Question)
-                        .ThenInclude(q => q.Answers)
-                            .ThenInclude(a => a.Votes)
-                // ❌ EROARE CORECTATĂ: Filtrarea se face pe StudentId (string) (CS0019)
-                .Include(s => s.Scores.Where(sc => sc.StudentId == studentId))
+                        .ThenInclude(q => q.Answers) // Include Answers
+                            .ThenInclude(a => a.Votes) // Include Votes (dacă sunt necesare în View)
+                .Include(s => s.SessionStudents) // Pentru verificarea isInSession
+                                                 // ❌ ELIMINĂ Include(s => s.Scores): Le vom încărca separat
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (session == null)
                 return NotFound();
 
-            // Verifică dacă studentul face parte din sesiune
-            var isInSession = await _context.SessionStudents
-                .AnyAsync(ss => ss.SessionId == id && ss.StudentId == studentId);
+            // 2. Verifică dacă studentul face parte din sesiune
+            // Folosim colecția încărcată de mai sus sau interogarea separată (cea încărcată e mai eficientă)
+            var isInSession = session.SessionStudents.Any(ss => ss.StudentId == studentId);
 
             if (!isInSession)
                 return RedirectToAction(nameof(Join));
 
+            // 3. Încarcă SCORUL Studentului separat (Cea mai sigură cale)
+            var studentScore = await _context.Scores
+                .FirstOrDefaultAsync(sc => sc.SessionId == session.Id && sc.StudentId == studentId);
+
+            // 4. Trimite datele către View
             ViewBag.StudentId = studentId;
+            ViewBag.StudentScore = studentScore; // Trimite obiectul Score direct (poate fi null)
+
+            // ATENȚIE: Nu mai trimitem `session` (care NU mai include Scores)
+            // Va trebui să adaptezi View-ul pentru a folosi ViewBag.StudentScore
             return View(session);
         }
 

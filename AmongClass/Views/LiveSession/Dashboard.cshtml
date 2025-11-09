@@ -229,195 +229,107 @@
     }
 </style>
 
+@{
+    ViewBag.Title = $"Dashboard - {Model.Name}";
+    var currentQuestion = ViewBag.CurrentQuestion as Question;
+    var scores = ViewBag.Scores as List<Score>;
+}
+
 <div class="dashboard-container">
-    <div class="dashboard-header">
-        <div>
-            <span class="live-badge">
-                <i class="bi bi-circle-fill"></i>
-                LIVE
-            </span>
-            <h1 style="color: white; margin: 1rem 0 0 0; font-size: 2rem;">@Model.Name</h1>
+    <div class="page-header text-center">
+        <h1 class="page-title"><i class="bi bi-bar-chart-line-fill"></i> Dashboard: @Model.Name</h1>
+        <a href="/LiveSession/Index" class="btn btn-secondary-modern">
+            <i class="bi bi-arrow-left"></i> Înapoi la Sesiuni
+        </a>
+    </div>
+
+    <div class="header-info row align-items-center">
+        <div class="col-md-6 mb-3 mb-md-0">
+            <p class="text-secondary mb-1">Codul de Join al Sesiunii:</p>
+            <div class="code-display">@Model.JoinCode</div>
+            <p class="mt-2 text-white-50">Sesiunea este 🟢 **Activă**.</p>
         </div>
-        <div class="session-info-bar">
-            <div class="info-stat">
-                <i class="bi bi-key-fill"></i>
-                <span>@Model.JoinCode</span>
-            </div>
-            <div class="info-stat">
-                <i class="bi bi-people-fill"></i>
-                <span>@Model.SessionStudents.Count studenți</span>
-            </div>
+        <div class="col-md-6 text-md-end">
+             <form method="post" action="/LiveSession/EndSession/@Model.Id" onsubmit="return confirm('Sigur vrei să închei sesiunea?')" style="display: inline-block;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-danger btn-lg">
+                    <i class="bi bi-stop-fill"></i>
+                    Încheie Sesiunea
+                </button>
+            </form>
         </div>
     </div>
 
-    <div class="grid-layout">
-        <!-- Panoul Principal: Întrebări -->
-        <div>
-            <div class="panel">
-                <h2 class="panel-title">
-                    <i class="bi bi-list-check"></i>
-                    Întrebări
-                </h2>
-
-                @foreach (var sq in Model.SessionQuestions.OrderBy(q => q.Order))
+    <div class="row">
+        @* Coloana 1: Întrebarea Curentă și Răspunsurile *@
+        <div class="col-lg-6">
+            <div class="card-live">
+                <h3 class="text-primary"><i class="bi bi-patch-question-fill"></i> Întrebarea Curentă</h3>
+                
+                @if (currentQuestion != null)
                 {
-                    var isActive = Model.CurrentQuestionId == sq.QuestionId;
-                    var isCompleted = sq.CompletedAt != null;
-                    var answerCount = sq.Question.Answers?.Count ?? 0;
-
-                    <div class="question-card @(isActive ? "active" : "") @(isCompleted ? "completed" : "")">
-                        <div class="question-title">
-                            @if (isActive)
-                            {
-                                <span style="color: #10b981;">▶</span>
-                            }
-                            else if (isCompleted)
-                            {
-                                <span style="color: #94a3b8;">✓</span>
-                            }
-                            @sq.Question.Text
-                        </div>
-
-                        <div class="question-meta">
-                            <div>
-                                <i class="bi bi-clock"></i> @sq.TimeLimit sec |
-                                <i class="bi bi-chat-dots"></i> @answerCount răspunsuri
-                            </div>
-                            @if (isActive)
-                            {
-                                <span style="color: #10b981; font-weight: 700;">
-                                    <i class="bi bi-broadcast"></i> ACTIVĂ ACUM
-                                </span>
-                            }
-                            else if (isCompleted)
-                            {
-                                <span style="color: #94a3b8;">
-                                    <i class="bi bi-check-circle"></i> Completată
-                                </span>
-                            }
-                        </div>
-
-                        @if (!isActive && !isCompleted)
-                        {
-                            <form method="post" action="/LiveSession/ActivateQuestion" style="display: inline;">
-                                @Html.AntiForgeryToken()
-                                <input type="hidden" name="sessionId" value="@Model.Id" />
-                                <input type="hidden" name="questionId" value="@sq.QuestionId" />
-                                <button type="submit" class="btn btn-activate">
-                                    <i class="bi bi-play-fill"></i>
-                                    Activează
-                                </button>
-                            </form>
-                        }
-                    </div>
-                }
-
-                @if (!Model.SessionQuestions.Any())
-                {
-                    <div class="empty-state">
-                        <i class="bi bi-inbox"></i>
-                        <p>Nu ai adăugat întrebări</p>
-                    </div>
-                }
-            </div>
-
-            <!-- Răspunsuri la întrebarea curentă -->
-            @if (Model.CurrentQuestionId.HasValue)
-            {
-                var currentQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == Model.CurrentQuestionId.Value);
-                if (currentQuestion != null)
-                {
-                    <div class="panel" style="margin-top: 2rem;">
-                        <h2 class="panel-title">
-                            <i class="bi bi-chat-dots-fill"></i>
-                            Răspunsuri la Întrebarea Curentă
-                        </h2>
-
-                        <div class="answers-panel">
-                            @if (currentQuestion.Question.Answers != null && currentQuestion.Question.Answers.Any())
-                            {
-                                @foreach (var answer in currentQuestion.Question.Answers)
-                                {
-                                    var voteCount = answer.Votes?.Count ?? 0;
-                                    <div class="answer-item">
-                                        <div class="answer-text">@answer.Text</div>
-                                        <div class="answer-meta">
-                                            <span>
-                                                <i class="bi bi-person"></i> Student
-                                            </span>
-                                            @if (voteCount > 0)
-                                            {
-                                                <span class="votes-badge">
-                                                    <i class="bi bi-robot"></i> @voteCount voturi AI
-                                                </span>
-                                            }
-                                        </div>
-                                    </div>
-                                }
-                            }
-                            else
-                            {
-                                <div class="empty-state">
-                                    <i class="bi bi-hourglass-split"></i>
-                                    <p>Așteptăm răspunsuri...</p>
-                                </div>
-                            }
-                        </div>
-                    </div>
-                }
-            }
-        </div>
-
-        <!-- Panoul Lateral: Studenți și Scoruri -->
-        <div>
-            <div class="panel">
-                <h2 class="panel-title">
-                    <i class="bi bi-trophy-fill"></i>
-                    Clasament Live
-                </h2>
-
-                @if (Model.Scores != null && Model.Scores.Any())
-                {
-                    var sortedScores = Model.Scores.OrderByDescending(s => s.Points).ToList();
-                    var rank = 1;
-
-                    @foreach (var score in sortedScores)
+                    <h4 class="text-white">@currentQuestion.Text</h4>
+                    <hr style="border-top: 1px solid #334155;">
+                    
+                    <h5 class="text-secondary">Răspunsuri (Live, @(currentQuestion.Answers?.Count() ?? 0) total):</h5>
+                    
+                    @if (currentQuestion.Answers != null && currentQuestion.Answers.Any())
                     {
-                        <div class="student-item">
-                            <div>
-                                <span style="color: #94a3b8; margin-right: 0.5rem;">#{rank}</span>
-                                <span class="student-name">@score.Student.UserName</span>
-                            </div>
-                            <span class="student-score">@score.Points pts</span>
-                        </div>
-                        rank++;
+                        <ul class="list-unstyled">
+                            @foreach (var answer in currentQuestion.Answers.OrderByDescending(a => a.Votes.Count))
+                            {
+                                <li class="text-white mb-2 p-2 border rounded" style="border-color: #475569 !important;">
+                                    <strong>@answer.User.UserName</strong>: 
+                                    @(answer.Text.Length > 40 ? answer.Text.Substring(0, 40) + "..." : answer.Text)
+                                    <span class="badge bg-secondary ms-2">Voturi: @answer.Votes.Count</span>
+                                </li>
+                            }
+                        </ul>
                     }
+                    else
+                    {
+                        <p class="text-warning">Încă nu s-au trimis răspunsuri la această întrebare.</p>
+                    }
+                    
+                    @* Acțiuni pentru profesor (ex: Treci la următoarea întrebare) *@
+                    <div class="mt-3">
+                        <a href="#" class="btn btn-warning disabled" title="Implementare necesară">
+                            <i class="bi bi-arrow-right-circle-fill"></i> Treci la Următoarea
+                        </a>
+                    </div>
                 }
                 else
                 {
-                    <div class="empty-state">
-                        <i class="bi bi-people"></i>
-                        <p>Nu sunt studenți conectați</p>
-                    </div>
+                    <p class="text-secondary">Nicio întrebare activă. Sesiunea este pregătită.</p>
                 }
             </div>
         </div>
-    </div>
 
-    <div class="control-buttons">
-        <form method="post" action="/LiveSession/EndSession/@Model.Id" style="display: inline;">
-            @Html.AntiForgeryToken()
-            <button type="submit" class="btn btn-danger" onclick="return confirm('Sigur vrei să închei sesiunea? Studenții nu vor mai putea răspunde.')">
-                <i class="bi bi-stop-fill"></i>
-                Încheie Sesiunea
-            </button>
-        </form>
+        @* Coloana 2: Clasament Live *@
+        <div class="col-lg-6">
+            <div class="card-live">
+                <h3 class="text-success"><i class="bi bi-trophy-fill"></i> Clasament Live</h3>
+                <ul class="score-list">
+                    @if (scores != null && scores.Any())
+                    {
+                        for (int i = 0; i < scores.Count; i++)
+                        {
+                            var score = scores[i];
+                            <li class="score-item">
+                                <span class="score-rank">@(i + 1).</span>
+                                <span style="flex-grow: 1;">
+                                    @score.Student.UserName 
+                                </span>
+                                <span class="score-points">@score.Points Puncte</span>
+                            </li>
+                        }
+                    }
+                    else
+                    {
+                        <p class="text-secondary">Niciun student în sesiune încă.</p>
+                    }
+                </ul>
+            </div>
+        </div>
     </div>
 </div>
-
-<script>
-    // Auto-refresh la fiecare 5 secunde pentru a vedea actualizări
-    setTimeout(function() {
-        location.reload();
-    }, 5000);
-</script>

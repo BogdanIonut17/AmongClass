@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace AmongClass.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20251109005222_InitialSetup")]
-    partial class InitialSetup
+    [Migration("20251109014140_Test")]
+    partial class Test
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -69,21 +69,6 @@ namespace AmongClass.Data.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Answers");
-                });
-
-            modelBuilder.Entity("AmongClass.Models.Category", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("AmongClass.Models.Question", b =>

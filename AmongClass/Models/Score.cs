@@ -10,9 +10,7 @@ namespace AmongClass.Models
 
         public Guid SessionId { get; set; }
         public string StudentId { get; set; }
-
         public int Points { get; set; }
-
         public Session Session { get; set; }
         public IdentityUser Student { get; set; }
     }

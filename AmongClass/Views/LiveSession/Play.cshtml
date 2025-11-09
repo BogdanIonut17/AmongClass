@@ -2,8 +2,9 @@
 
 @{
     ViewBag.Title = "Joacă Live";
-    var studentId = ViewBag.StudentId;
-    var studentScore = Model.Scores.FirstOrDefault();
+    var studentId = ViewBag.StudentId as string;
+    // Utilizează noul ViewBag care conține scorul studentului (sau null)
+    var studentScore = ViewBag.StudentScore as AmongClass.Models.Score;
 }
 
 <style>
@@ -12,7 +13,6 @@
         margin: 1rem auto;
         padding: 0 1rem;
     }
-
     .play-header {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         border-radius: 16px;
@@ -257,8 +257,18 @@
             </div>
         </div>
         <div class="your-score">
-            <i class="bi bi-star-fill"></i>
-            @(studentScore?.Points ?? 0) puncte
+            @if (studentScore != null)
+            {
+                // Afișează scorul:
+                <p>Puncte: @studentScore.Points</p>
+            }
+            else
+            {
+                // Cazul în care scorul lipsește:
+                <p>Scorul nu a fost inițializat încă.</p>
+            }
+            @* <i class="bi bi-star-fill"></i>
+            @(studentScore?.Points ?? 0) puncte *@
         </div>
     </div>
 

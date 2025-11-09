@@ -11,8 +11,6 @@ namespace AmongClass.Data
             : base(options)
         {
         }
-
-        public DbSet<AmongClass.Models.Category> Categories { get; set; }
         public DbSet<Score> Scores { get; set; }
         public DbSet<AIResponse> AIResponses { get; set; }
         public DbSet<Session> Sessions { get; set; }
