@@ -138,12 +138,27 @@
             background: #475569;
             color: #f1f5f9;
         }
+
+    .debug-info {
+        background: #0f172a;
+        border: 2px solid #3b82f6;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 2rem;
+        color: #60a5fa;
+        font-family: monospace;
+    }
 </style>
 
 <div class="new-container">
     <a href="/Questions/Show/@ViewBag.QuestionId" class="btn-back">
         <i class="bi bi-arrow-left"></i> Înapoi
     </a>
+
+    <!-- DEBUG INFO -->
+    <div class="debug-info">
+        <strong>DEBUG:</strong> QuestionId = @ViewBag.QuestionId
+    </div>
 
     <div class="new-card">
         <div class="warning-box">
@@ -156,13 +171,13 @@
             Scrie răspunsul tău
         </h2>
 
-        <form method="post" action="/Answers/New">
+        <form method="post" action="/Answers/New" onsubmit="console.log('Form submitting...'); return true;">
             <input type="hidden" name="QuestionId" value="@ViewBag.QuestionId" />
 
             <textarea name="Text" class="form-textarea" placeholder="Scrie răspunsul tău aici... Fii creativ!" required></textarea>
 
             <div class="btn-group">
-                <button type="submit" class="btn btn-submit">
+                <button type="submit" class="btn btn-submit" onclick="console.log('Button clicked!')">
                     <i class="bi bi-send-fill"></i> Trimite răspunsul
                 </button>
                 <a href="/Questions/Show/@ViewBag.QuestionId" class="btn btn-cancel">
@@ -172,3 +187,22 @@
         </form>
     </div>
 </div>
+
+<script>
+    // JavaScript pentru debugging
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.querySelector('form');
+        console.log('Form found:', form);
+        console.log('Form action:', form.action);
+        console.log('Form method:', form.method);
+
+        form.addEventListener('submit', function(e) {
+            console.log('=== FORM SUBMIT DEBUG ===');
+            const formData = new FormData(form);
+            for (let [key, value] of formData.entries()) {
+                console.log(`${key}: ${value}`);
+            }
+            console.log('========================');
+        });
+    });
+</script>
