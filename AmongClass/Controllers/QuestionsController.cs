@@ -36,7 +36,10 @@ namespace AmongClass.Controllers
             {
                 db.Questions.Add(q);
                 db.SaveChanges();
-                return RedirectToAction("Index");
+                //return RedirectToAction("Index");
+
+                return RedirectToAction("Ask", "Ollama", new { prompt = q.Text });
+
             }
             catch (Exception e)
             {
