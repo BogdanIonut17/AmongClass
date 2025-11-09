@@ -49,26 +49,27 @@ namespace AmongClass.Controllers
             await db.SaveChangesAsync();
 
             // Generează răspuns AI în fundal
+            var questionId = answer.QuestionId;
             _ = Task.Run(async () =>
             {
                 try
                 {
-                    string questionText = answer.Question.Text;
-                    string aiResponseText = await _rag.GetRelevantRules(questionText); // sau alt prompt personalizat pentru AI
-                    var aiAnswer = new Answer
+                    var question = await db.Questions.FindAsync(questionId);
+                    if (question != null)
                     {
-                        Id = Guid.NewGuid(),
-                        Text = aiResponseText,
-                        QuestionId = answer.QuestionId,
-                        UserId = String.Empty, // sau un ID special care semnifică AI
-                    };
-                    db.Answers.Add(aiAnswer);
-                    await db.SaveChangesAsync();
+                        string aiResponseText = await _rag.GetRelevantRules(question.Text);
+                        var aiAnswer = new Answer
+                        {
+                            Id = Guid.NewGuid(),
+                            Text = aiResponseText,
+                            QuestionId = questionId,
+                            UserId = Guid.Empty.ToString()
+                        };
+                        db.Answers.Add(aiAnswer);
+                        await db.SaveChangesAsync();
+                    }
                 }
-                catch
-                {
-                    // Poți loga eroarea, dar nu întrerupe procesul principal
-                }
+                catch { }
             });
 
             return RedirectToAction("Show", "Questions", new { id = answer.QuestionId });
@@ -91,7 +92,6 @@ namespace AmongClass.Controllers
             return View();
         }
 
-        // de pe claim-uri verifici user-id ul de pe claim si cu user-id ul de la cine a crea answer-ul
         [HttpPost]
         public IActionResult Edit(Guid id, Answer requestAnswer)
         {

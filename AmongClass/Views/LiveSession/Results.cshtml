@@ -1,0 +1,350 @@
+﻿@model AmongClass.Models.Session
+
+@{
+    ViewBag.Title = "Rezultate Sesiune";
+}
+
+<style>
+    .results-container {
+        max-width: 1200px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .results-header {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 2px solid #3b82f6;
+        border-radius: 20px;
+        padding: 2.5rem;
+        margin-bottom: 3rem;
+        text-align: center;
+    }
+
+    .results-title {
+        color: #f1f5f9;
+        font-size: 3rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .session-name {
+        color: #60a5fa;
+        font-size: 1.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .session-meta {
+        color: #94a3b8;
+        font-size: 1.1rem;
+    }
+
+    .leaderboard-card {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .leaderboard-title {
+        color: #f1f5f9;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .suspect-item {
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .suspect-item:hover {
+            border-color: #ef4444;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.2);
+        }
+
+    .suspect-rank {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        width: 60px;
+        height: 60px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+    }
+
+        .suspect-rank.top-1 {
+            width: 70px;
+            height: 70px;
+            font-size: 2rem;
+            background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+            color: #000;
+            box-shadow: 0 0 30px rgba(250, 204, 21, 0.5);
+        }
+
+        .suspect-rank.top-2 {
+            background: linear-gradient(135deg, #cbd5e1 0%, #94a3b8 100%);
+            color: #000;
+        }
+
+        .suspect-rank.top-3 {
+            background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+        }
+
+    .suspect-info {
+        flex-grow: 1;
+    }
+
+    .suspect-name {
+        color: #f1f5f9;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .suspect-stats {
+        color: #94a3b8;
+        font-size: 1rem;
+    }
+
+    .suspect-badge {
+        background: #ef4444;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 1.2rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        flex-shrink: 0;
+    }
+
+        .suspect-badge.gold {
+            background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+            color: #000;
+            font-size: 1.4rem;
+            padding: 1rem 2rem;
+        }
+
+    .no-suspects {
+        text-align: center;
+        padding: 4rem 2rem;
+        color: #64748b;
+    }
+
+        .no-suspects i {
+            font-size: 4rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+    .btn-back {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+        border: none;
+    }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.4);
+            color: white;
+        }
+
+    .details-section {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .details-title {
+        color: #f1f5f9;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .detail-item {
+        background: #0f172a;
+        border-radius: 8px;
+        padding: 1rem;
+        margin-bottom: 0.75rem;
+        color: #e2e8f0;
+    }
+
+    .detail-label {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+        font-size: 1.1rem;
+        font-weight: 600;
+    }
+</style>
+
+<div class="results-container">
+    <div class="results-header">
+        <h1 class="results-title">🏆 Rezultate Finale</h1>
+        <div class="session-name">@Model.Name</div>
+        <div class="session-meta">
+            Sesiune încheiată • @Model.SessionStudents.Count participanți • @Model.SessionQuestions.Count întrebări
+        </div>
+    </div>
+
+    @{
+        // Calculează leaderboard-ul: cei mai suspectați
+        var suspectLeaderboard = new List<dynamic>();
+
+        foreach (var student in Model.SessionStudents)
+        {
+            int timesAsMostVoted = 0;
+
+            // Pentru fiecare întrebare din sesiune
+            foreach (var sessionQuestion in Model.SessionQuestions)
+            {
+                var question = sessionQuestion.Question;
+                if (question?.Answers == null || !question.Answers.Any()) continue;
+
+                // Găsește răspunsul acestui student la această întrebare
+                var studentAnswer = question.Answers.FirstOrDefault(a => a.UserId == student.StudentId);
+                if (studentAnswer == null) continue;
+
+                // Verifică dacă acest răspuns a fost cel mai votat
+                var maxVotes = question.Answers.Max(a => a.Votes?.Count ?? 0);
+                var studentVotes = studentAnswer.Votes?.Count ?? 0;
+
+                if (studentVotes > 0 && studentVotes == maxVotes)
+                {
+                    timesAsMostVoted++;
+                }
+            }
+
+            if (timesAsMostVoted > 0)
+            {
+                suspectLeaderboard.Add(new
+                {
+                    StudentId = student.StudentId,
+                    StudentName = student.Student.UserName,
+                    TimesAsMostVoted = timesAsMostVoted
+                });
+            }
+        }
+
+        // Sortează descrescător după numărul de ori când au fost cei mai votați
+        suspectLeaderboard = suspectLeaderboard.OrderByDescending(s => s.TimesAsMostVoted).ToList();
+    }
+
+    <div class="leaderboard-card">
+        <h2 class="leaderboard-title">
+            <i class="bi bi-robot"></i>
+            Cei Mai Suspectați ca AI
+        </h2>
+
+        @if (suspectLeaderboard.Any())
+        {
+            for (int i = 0; i < suspectLeaderboard.Count; i++)
+            {
+                var suspect = suspectLeaderboard[i];
+                var rank = i + 1;
+                var rankClass = rank == 1 ? "top-1" : rank == 2 ? "top-2" : rank == 3 ? "top-3" : "";
+
+                <div class="suspect-item">
+                    <div class="suspect-rank @rankClass">
+                        @if (rank == 1)
+                        {
+                            <span>👑</span>
+                        }
+                        else
+                        {
+                            <span>@rank</span>
+                        }
+                    </div>
+
+                    <div class="suspect-info">
+                        <div class="suspect-name">@suspect.StudentName</div>
+                        <div class="suspect-stats">
+                            Votat ca "cel mai suspect" în @suspect.TimesAsMostVoted
+                            @(suspect.TimesAsMostVoted == 1 ? "rundă" : "runde")
+                        </div>
+                    </div>
+
+                    <div class="suspect-badge @(rank == 1 ? "gold" : "")">
+                        <i class="bi bi-fire"></i>
+                        @suspect.TimesAsMostVoted @(suspect.TimesAsMostVoted == 1 ? "rundă" : "runde")
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-suspects">
+                <i class="bi bi-emoji-smile"></i>
+                <h3>Nimeni nu a fost suspectat!</h3>
+                <p>Nu au fost înregistrate voturi în această sesiune.</p>
+            </div>
+        }
+    </div>
+
+    <div class="details-section">
+        <h3 class="details-title">
+            <i class="bi bi-info-circle"></i>
+            Detalii Sesiune
+        </h3>
+
+        <div class="row">
+            <div class="col-md-4">
+                <div class="detail-item">
+                    <div class="detail-label">Total Participanți</div>
+                    <div class="detail-value">@Model.SessionStudents.Count</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="detail-item">
+                    <div class="detail-label">Total Întrebări</div>
+                    <div class="detail-value">@Model.SessionQuestions.Count</div>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="detail-item">
+                    <div class="detail-label">Status</div>
+                    <div class="detail-value">Încheiată</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="text-center mt-4">
+        <a href="/LiveSession/Index" class="btn-back">
+            <i class="bi bi-arrow-left"></i>
+            Înapoi la Sesiuni
+        </a>
+    </div>
+</div>

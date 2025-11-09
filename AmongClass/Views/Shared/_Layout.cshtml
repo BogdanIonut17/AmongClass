@@ -202,18 +202,14 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav ms-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Questions/Index">
-                            <i class="bi bi-question-circle"></i> Întrebări
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Answers/Index">
-                            <i class="bi bi-chat-dots"></i> Răspunsuri
-                        </a>
-                    </li>
                     @if (User.IsInRole("Teacher"))
                     {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Questions/Index">
+                                <i class="bi bi-question-circle"></i> Întrebări
+                            </a>
+                        </li>
+                    
                         <li class="nav-item">
                             <a class="nav-link" href="/LiveSession/Index">
                                 <i class="bi bi-broadcast"></i> Sesiuni Live

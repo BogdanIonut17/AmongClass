@@ -191,12 +191,3 @@ else
 {
     <p class="text-light">Nu există răspunsuri încă.</p>
 }
-
-@if (User.IsInRole("Student"))
-{
-    <div class="text-center mt-4">
-        <a class="btn btn-success btn-lg" href="/Answers/New?questionId=@ViewBag.Question.Id">
-            <i class="bi bi-plus-circle-fill"></i> Adaugă răspunsul tău
-        </a>
-    </div>
-}

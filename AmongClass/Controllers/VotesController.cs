@@ -31,6 +31,7 @@ namespace AmongClass.Controllers
 
             if (answer == null) return NotFound();
 
+            // Verifică dacă a votat deja pentru această întrebare
             var existingVote = await _db.Votes
                 .Include(v => v.Answer)
                 .Where(v => v.UserId == currentUser.Id && v.Answer.QuestionId == answer.QuestionId)
@@ -41,7 +42,8 @@ namespace AmongClass.Controllers
                 return RedirectToAction("Show", "Questions", new { id = answer.QuestionId });
             }
 
-            if (answer.UserId.ToString() == currentUser.Id)
+            // Nu poate vota propriul răspuns
+            if (answer.UserId == currentUser.Id)
             {
                 return RedirectToAction("Show", "Questions", new { id = answer.QuestionId });
             }

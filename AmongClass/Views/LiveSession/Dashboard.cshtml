@@ -2,92 +2,105 @@
 
 @{
     ViewBag.Title = "Dashboard Live";
+    var currentQuestion = ViewBag.CurrentQuestion as Question;
+    var scores = ViewBag.Scores as List<Score>;
 }
 
 <style>
-    .dashboard-container {
-        max-width: 1600px;
-        margin: 1rem auto;
-        padding: 0 1rem;
-    }
-
-    .dashboard-header {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        border-radius: 16px;
-        padding: 1.5rem 2rem;
-        margin-bottom: 2rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .live-badge {
-        background: #ef4444;
+    .btn-back-light {
+        background: rgba(255, 255, 255, 0.2);
         color: white;
-        padding: 0.5rem 1rem;
-        border-radius: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.05rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+    .btn-back-light:hover {
+        background: rgba(255, 255, 255, 0.3);
+        border-color: rgba(255, 255, 255, 0.5);
+        color: white;
+        transform: translateY(-2px);
+    }
+
+    .page-title {
+        color: #f1f5f9;
+        font-size: 2.5rem;
         font-weight: 700;
-        animation: pulse 2s infinite;
+        margin-bottom: 1rem;
+    }
+
+    .code-display {
+        background: #0f172a;
+        border: 2px solid #10b981;
+        padding: 1rem 1.5rem;
+        border-radius: 12px;
+        color: #10b981;
+        font-size: 2rem;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 3px;
+        display: inline-block;
+        margin: 1rem 0;
+    }
+
+    .card-live {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .btn-next-question {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        border: none;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
     }
 
-    @@keyframes pulse {
-        0%, 100% {
-            opacity: 1;
-        }
-
-        50% {
-            opacity: 0.7;
-        }
+    .btn-next-question:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 20px rgba(245, 158, 11, 0.4);
     }
 
-    .session-info-bar {
-        display: flex;
-        gap: 2rem;
-        align-items: center;
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
         color: white;
-    }
-
-    .info-stat {
-        display: flex;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.05rem;
+        border: none;
+        border-radius: 12px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        font-size: 1.1rem;
-        font-weight: 600;
     }
 
-    .grid-layout {
-        display: grid;
-        grid-template-columns: 2fr 1fr;
-        gap: 2rem;
-    }
-
-    @@media (max-width: 1200px) {
-        .grid-layout {
-            grid-template-columns: 1fr;
-        }
-    }
-
-    .panel {
+    .header-info {
         background: #1e293b;
         border: 2px solid #334155;
         border-radius: 16px;
         padding: 2rem;
+        margin-bottom: 2rem;
     }
 
-    .panel-title {
-        color: #f1f5f9;
-        font-size: 1.5rem;
-        font-weight: 700;
-        margin-bottom: 1.5rem;
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-    }
-
-    .question-card {
+    .answer-item {
         background: #0f172a;
         border: 2px solid #334155;
         border-radius: 12px;
@@ -96,149 +109,132 @@
         transition: all 0.3s ease;
     }
 
-        .question-card.active {
-            border-color: #10b981;
-            background: rgba(16, 185, 129, 0.05);
-        }
-
-        .question-card.completed {
-            opacity: 0.6;
-            border-color: #475569;
-        }
-
-    .question-title {
-        color: #f1f5f9;
-        font-size: 1.2rem;
-        margin-bottom: 1rem;
+    .answer-item.most-voted {
+        border-color: #ef4444;
+        background: rgba(239, 68, 68, 0.1);
+        box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        animation: pulse-glow 2s infinite;
     }
 
-    .question-meta {
+    @@keyframes pulse-glow {
+        0%, 100% {
+            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+        }
+        50% {
+            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+        }
+    }
+
+    .answer-header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        color: #94a3b8;
-        font-size: 0.9rem;
         margin-bottom: 1rem;
     }
 
-    .btn {
-        padding: 0.5rem 1rem;
-        border-radius: 8px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    .btn-activate {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        color: white;
-    }
-
-        .btn-activate:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(16, 185, 129, 0.4);
-        }
-
-    .btn-danger {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: white;
-        padding: 0.75rem 1.5rem;
-        font-size: 1.05rem;
-    }
-
-    .student-item {
-        background: #0f172a;
-        border: 2px solid #334155;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 0.75rem;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
-
-    .student-name {
+    .answer-user {
         color: #e2e8f0;
-        font-weight: 600;
-    }
-
-    .student-score {
-        background: #3b82f6;
-        color: white;
-        padding: 0.25rem 0.75rem;
-        border-radius: 20px;
         font-weight: 700;
-    }
-
-    .answers-panel {
-        max-height: 500px;
-        overflow-y: auto;
-    }
-
-    .answer-item {
-        background: #0f172a;
-        border: 2px solid #334155;
-        border-radius: 8px;
-        padding: 1rem;
-        margin-bottom: 0.75rem;
+        font-size: 1.1rem;
     }
 
     .answer-text {
-        color: #e2e8f0;
-        margin-bottom: 0.5rem;
-    }
-
-    .answer-meta {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        color: #94a3b8;
-        font-size: 0.85rem;
+        color: #cbd5e1;
+        margin: 1rem 0;
+        line-height: 1.6;
     }
 
     .votes-badge {
         background: #ef4444;
         color: white;
-        padding: 0.25rem 0.5rem;
-        border-radius: 12px;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .votes-badge.highest {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        font-size: 1.2rem;
+        padding: 0.75rem 1.25rem;
+        animation: pulse-badge 1.5s infinite;
+    }
+
+    @@keyframes pulse-badge {
+        0%, 100% {
+            transform: scale(1);
+        }
+        50% {
+            transform: scale(1.05);
+        }
+    }
+
+    .ai-badge {
+        background: #facc15;
+        color: #000;
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
         font-weight: 700;
     }
 
-    .empty-state {
-        text-align: center;
-        padding: 2rem;
-        color: #64748b;
+    .timer-display {
+        background: #ef4444;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1.5rem;
+        font-weight: 700;
+        display: inline-block;
+        margin-top: 1rem;
     }
 
-        .empty-state i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-            opacity: 0.5;
-        }
+    .timer-display.warning {
+        animation: pulse-timer 1s infinite;
+    }
 
-    .control-buttons {
-        display: flex;
+    @@keyframes pulse-timer {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.7; }
+    }
+
+    .stats-panel {
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
         gap: 1rem;
-        margin-top: 2rem;
-        justify-content: center;
+    }
+
+    .stat-item {
+        text-align: center;
+    }
+
+    .stat-value {
+        color: #10b981;
+        font-size: 2rem;
+        font-weight: 700;
+    }
+
+    .stat-label {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
     }
 </style>
-
-@{
-    ViewBag.Title = $"Dashboard - {Model.Name}";
-    var currentQuestion = ViewBag.CurrentQuestion as Question;
-    var scores = ViewBag.Scores as List<Score>;
-}
 
 <div class="dashboard-container">
     <div class="page-header text-center">
         <h1 class="page-title"><i class="bi bi-bar-chart-line-fill"></i> Dashboard: @Model.Name</h1>
-        <a href="/LiveSession/Index" class="btn btn-secondary-modern">
+        <a href="/LiveSession/Index" class="btn-back-light">
             <i class="bi bi-arrow-left"></i> Înapoi la Sesiuni
         </a>
     </div>
@@ -247,12 +243,12 @@
         <div class="col-md-6 mb-3 mb-md-0">
             <p class="text-secondary mb-1">Codul de Join al Sesiunii:</p>
             <div class="code-display">@Model.JoinCode</div>
-            <p class="mt-2 text-white-50">Sesiunea este 🟢 **Activă**.</p>
+            <p class="mt-2 text-white-50">Sesiunea este 🟢 Activă.</p>
         </div>
         <div class="col-md-6 text-md-end">
              <form method="post" action="/LiveSession/EndSession/@Model.Id" onsubmit="return confirm('Sigur vrei să închei sesiunea?')" style="display: inline-block;">
                 @Html.AntiForgeryToken()
-                <button type="submit" class="btn btn-danger btn-lg">
+                <button type="submit" class="btn-danger">
                     <i class="bi bi-stop-fill"></i>
                     Încheie Sesiunea
                 </button>
@@ -261,75 +257,150 @@
     </div>
 
     <div class="row">
-        @* Coloana 1: Întrebarea Curentă și Răspunsurile *@
-        <div class="col-lg-6">
+        <div class="col-12">
             <div class="card-live">
                 <h3 class="text-primary"><i class="bi bi-patch-question-fill"></i> Întrebarea Curentă</h3>
                 
                 @if (currentQuestion != null)
                 {
                     <h4 class="text-white">@currentQuestion.Text</h4>
-                    <hr style="border-top: 1px solid #334155;">
                     
-                    <h5 class="text-secondary">Răspunsuri (Live, @(currentQuestion.Answers?.Count() ?? 0) total):</h5>
+                    {
+                        var sessionQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == currentQuestion.Id);
+                        if (sessionQuestion?.ActivatedAt != null)
+                        {
+                            var elapsed = (DateTime.UtcNow - sessionQuestion.ActivatedAt.Value).TotalSeconds;
+                            var remaining = Math.Max(0, sessionQuestion.TimeLimit - elapsed);
+                            var remainingMinutes = (int)remaining / 60;
+                            var remainingSeconds = (int)remaining % 60;
+                            
+                            <div class="timer-display @(remaining < 30 ? "warning" : "")">
+                                <i class="bi bi-clock-fill"></i> 
+                                @remainingMinutes:@remainingSeconds.ToString("D2")
+                            </div>
+                        }
+                    }
+                    
+                    <hr style="border-top: 1px solid #334155;">
                     
                     @if (currentQuestion.Answers != null && currentQuestion.Answers.Any())
                     {
-                        <ul class="list-unstyled">
-                            @foreach (var answer in currentQuestion.Answers.OrderByDescending(a => a.Votes.Count))
-                            {
-                                <li class="text-white mb-2 p-2 border rounded" style="border-color: #475569 !important;">
-                                    <strong>@answer.User.UserName</strong>: 
-                                    @(answer.Text.Length > 40 ? answer.Text.Substring(0, 40) + "..." : answer.Text)
-                                    <span class="badge bg-secondary ms-2">Voturi: @answer.Votes.Count</span>
-                                </li>
-                            }
-                        </ul>
+                        var maxVotes = currentQuestion.Answers.Max(a => a.Votes?.Count ?? 0);
+                        var totalVoters = currentQuestion.Answers.SelectMany(a => a.Votes ?? new List<Vote>()).Select(v => v.UserId).Distinct().Count();
+                        var totalAnswers = currentQuestion.Answers.Count;
+                        
+                        <div class="stats-panel">
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-value">@totalAnswers</div>
+                                    <div class="stat-label">Răspunsuri</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">@totalVoters</div>
+                                    <div class="stat-label">Au votat</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-value">@maxVotes</div>
+                                    <div class="stat-label">Voturi maxime</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <h5 class="text-secondary mb-3">Răspunsuri și Voturi:</h5>
+                        
+                        @foreach (var answer in currentQuestion.Answers.OrderByDescending(a => a.Votes?.Count ?? 0))
+                        {
+                            var voteCount = answer.Votes?.Count ?? 0;
+                            var isMostVoted = voteCount == maxVotes && maxVotes > 0;
+                            var isAI = string.IsNullOrEmpty(answer.UserId) || answer.UserId == Guid.Empty.ToString();
+                            
+                            <div class="answer-item @(isMostVoted ? "most-voted" : "")">
+                                <div class="answer-header">
+                                    <div class="answer-user">
+                                        @if (isAI)
+                                        {
+                                            <span class="ai-badge">
+                                                <i class="bi bi-robot"></i> AI
+                                            </span>
+                                        }
+                                        else
+                                        {
+                                            <span>@answer.User?.UserName</span>
+                                        }
+                                    </div>
+                                    <div>
+                                        @if (isMostVoted)
+                                        {
+                                            <span class="votes-badge highest">
+                                                <i class="bi bi-fire"></i> @voteCount voturi - CEL MAI SUSPECTAT
+                                            </span>
+                                        }
+                                        else if (voteCount > 0)
+                                        {
+                                            <span class="votes-badge">
+                                                <i class="bi bi-robot"></i> @voteCount voturi
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="answer-text">@answer.Text</div>
+                            </div>
+                        }
                     }
                     else
                     {
                         <p class="text-warning">Încă nu s-au trimis răspunsuri la această întrebare.</p>
                     }
                     
-                    @* Acțiuni pentru profesor (ex: Treci la următoarea întrebare) *@
                     <div class="mt-3">
-                        <a href="#" class="btn btn-warning disabled" title="Implementare necesară">
-                            <i class="bi bi-arrow-right-circle-fill"></i> Treci la Următoarea
-                        </a>
+                        <form method="post" action="/LiveSession/NextQuestion">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="sessionId" value="@Model.Id" />
+                            <button type="submit" class="btn-next-question">
+                                <i class="bi bi-arrow-right-circle-fill"></i> Treci la Următoarea Întrebare
+                            </button>
+                        </form>
                     </div>
                 }
                 else
                 {
-                    <p class="text-secondary">Nicio întrebare activă. Sesiunea este pregătită.</p>
+                    <p class="text-secondary">Nicio întrebare activă.</p>
                 }
-            </div>
-        </div>
-
-        @* Coloana 2: Clasament Live *@
-        <div class="col-lg-6">
-            <div class="card-live">
-                <h3 class="text-success"><i class="bi bi-trophy-fill"></i> Clasament Live</h3>
-                <ul class="score-list">
-                    @if (scores != null && scores.Any())
-                    {
-                        for (int i = 0; i < scores.Count; i++)
-                        {
-                            var score = scores[i];
-                            <li class="score-item">
-                                <span class="score-rank">@(i + 1).</span>
-                                <span style="flex-grow: 1;">
-                                    @score.Student.UserName 
-                                </span>
-                                <span class="score-points">@score.Points Puncte</span>
-                            </li>
-                        }
-                    }
-                    else
-                    {
-                        <p class="text-secondary">Niciun student în sesiune încă.</p>
-                    }
-                </ul>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+    @{
+        if (currentQuestion != null)
+        {
+            var sessionQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == currentQuestion.Id);
+            if (sessionQuestion?.ActivatedAt != null)
+            {
+                var elapsed = (DateTime.UtcNow - sessionQuestion.ActivatedAt.Value).TotalSeconds;
+                var remaining = Math.Max(0, sessionQuestion.TimeLimit - elapsed);
+                var isLastQuestion = !Model.SessionQuestions.Any(sq => sq.Order > sessionQuestion.Order);
+                var remainingMs = (int)(remaining * 1000);
+                var isLastJs = isLastQuestion.ToString().ToLower();
+                
+                @:var remainingMs = @remainingMs;
+                @:var isLast = @isLastJs;
+                @:
+                @:if (remainingMs > 0 && remainingMs < 600000) {
+                @:    setTimeout(function() {
+                @:        if (isLast) {
+                @:            document.querySelector('form[action*="EndSession"] button').click();
+                @:        } else {
+                @:            document.querySelector('form[action="/LiveSession/NextQuestion"] button').click();
+                @:        }
+                @:    }, remainingMs);
+                @:}
+            }
+        }
+    }
+    
+    setTimeout(function() {
+        location.reload();
+    }, 3000);
+</script>
