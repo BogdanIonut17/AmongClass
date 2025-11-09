@@ -396,34 +396,33 @@
 </div>
 
 <script>
-    @{
-            if (currentQuestion != null)
-            {
-                    var sessionQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == currentQuestion.Id);
-                    if (sessionQuestion?.ActivatedAt != null)
-                    {
-                            var elapsed = (DateTime.UtcNow - sessionQuestion.ActivatedAt.Value).TotalSeconds;
-                            var remaining = Math.Max(0, sessionQuestion.TimeLimit - elapsed);
-                            var isLastQuestion = !Model.SessionQuestions.Any(sq => sq.Order > sessionQuestion.Order);
-                            var remainingMs = (int)(remaining * 1000);
-                            var isLastJs = isLastQuestion.ToString().ToLower();
+@{
+    if (currentQuestion != null)
+    {
+        var sessionQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == currentQuestion.Id);
+        if (sessionQuestion?.ActivatedAt != null)
+        {
+            var elapsed = (DateTime.UtcNow - sessionQuestion.ActivatedAt.Value).TotalSeconds;
+            var remaining = Math.Max(0, sessionQuestion.TimeLimit - elapsed);
+            var isLastQuestion = !Model.SessionQuestions.Any(sq => sq.Order > sessionQuestion.Order);
+            var remainingMs = (int)(remaining * 1000);
+            var isLastJs = isLastQuestion.ToString().ToLower();
 
-                            @:var remainingMs = @remainingMs;
-                            @:var isLast = @isLastJs;
-                            @:
-                            @:if (remainingMs > 0 && remainingMs < 600000) {
-                            @:    setTimeout(function() {
-                            @:        if (isLast) {
-                            @:            document.getElementById('endSessionManualForm').submit();
-                            @:        } else {
-                            @:            document.getElementById('nextQuestionForm').submit();
-                            @:        }
-                            @:    }, remainingMs);
-                            @:}
-                    }
-            }
+            @:var remainingMs = @remainingMs;
+            @:var isLast = @isLastJs;
+
+            @:if (remainingMs > 0 && remainingMs < 600000) {
+            @:    setTimeout(function() {
+            @:        if (isLast) {
+            @:            document.getElementById('endSessionManualForm').submit();
+            @:        } else {
+            @:            document.getElementById('nextQuestionForm').submit();
+            @:        }
+            @:    }, remainingMs);
+            @:}
+        }
     }
-
+}
     setTimeout(function() {
         location.reload();
     }, 3000);
