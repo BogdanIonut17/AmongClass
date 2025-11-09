@@ -185,7 +185,7 @@
     {
         @foreach (var answer in ViewBag.Answers)
         {
-            bool isAI = answer.UserId == Guid.Empty; // AI-ul are UserId gol
+            bool isAI = answer.UserId == Guid.Empty;
 
 
             <div class="answer-item @(isAI ? "ai-answer" : "")">
@@ -215,8 +215,6 @@
                     }
                 </div>
             </div>
-
-            @* </div> *@
         }
     }
     else

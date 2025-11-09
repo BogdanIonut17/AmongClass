@@ -192,9 +192,18 @@
         </h1>
         <a href="/LiveSession/Create" class="create-btn">
             <i class="bi bi-plus-circle-fill"></i>
-            Creează Sesiune Nouă
+            Creează o sesiune nouă
         </a>
     </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
 
     @if (Model != null && Model.Any())
     {
@@ -238,7 +247,7 @@
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-success">
                                 <i class="bi bi-play-fill"></i>
-                                Start Sesiune
+                                Start sesiune
                             </button>
                         </form>
                     }
@@ -246,13 +255,13 @@
                     {
                         <a href="/LiveSession/Dashboard/@session.Id" class="btn btn-primary">
                             <i class="bi bi-speedometer2"></i>
-                            Dashboard Live
+                            Dashboard live
                         </a>
                         <form method="post" action="/LiveSession/EndSession/@session.Id" style="display: inline;">
                             @Html.AntiForgeryToken()
                             <button type="submit" class="btn btn-danger" onclick="return confirm('Sigur vrei să închei sesiunea?')">
                                 <i class="bi bi-stop-fill"></i>
-                                Încheie Sesiunea
+                                Încheie sesiunea
                             </button>
                         </form>
                     }
@@ -260,8 +269,19 @@
                     {
                         <a href="/LiveSession/Results/@session.Id" class="btn btn-primary">
                             <i class="bi bi-trophy-fill"></i>
-                            Vezi Rezultate
+                            Vezi rezultate
                         </a>
+                    }
+
+                    @if (session.Status != AmongClass.Models.SessionStatus.Active)
+                    {
+                        <form method="post" action="/LiveSession/Delete/@session.Id" style="display: inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger"
+                                    onclick="return confirm('Sigur vrei să ștergi această sesiune?')">
+                                <i class="bi bi-trash"></i> Șterge
+                            </button>
+                        </form>
                     }
                 </div>
             </div>

@@ -205,6 +205,7 @@ namespace AmongClass.Controllers
             return View(session);
         }
 
+        // În LiveSessionController.cs
         [HttpPost]
         [Authorize(Roles = "Teacher")]
         [ValidateAntiForgeryToken]
@@ -234,20 +235,15 @@ namespace AmongClass.Controllers
             {
                 session.CurrentQuestionId = nextQuestion.QuestionId;
                 nextQuestion.ActivatedAt = DateTime.UtcNow;
+
+                await _context.SaveChangesAsync();
+
+                return RedirectToAction(nameof(Dashboard), new { id = sessionId });
             }
             else
             {
                 return RedirectToAction(nameof(EndSession), new { id = sessionId });
-
-                // Nu mai sunt întrebări - încheie sesiunea
-                //session.Status = SessionStatus.Completed;
-                //session.CurrentQuestionId = null;
-
             }
-
-            //_context.SaveChanges();
-
-            return RedirectToAction(nameof(Dashboard), new { id = sessionId });
         }
 
         [HttpPost]
@@ -268,6 +264,42 @@ namespace AmongClass.Controllers
             }
 
             return RedirectToAction(nameof(Results), new { id = id });
+        }
+
+        // LiveSessionController.cs
+
+        // ... după metoda EndSession (sau unde dorești) ...
+
+        [HttpPost]
+        [Authorize(Roles = "Teacher")]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Delete(Guid id)
+        {
+            var session = await _context.Sessions.FindAsync(id);
+
+            if (session == null)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+
+            var teacherId = _userManager.GetUserId(User)!;
+            if (session.TeacherId != teacherId)
+            {
+                return Forbid(); 
+            }
+
+            if (session.Status == SessionStatus.Active)
+            {
+                TempData["ErrorMessage"] = $"Nu poți șterge sesiunea '{session.Name}' deoarece este activă. Trebuie să o închei mai întâi.";
+                return RedirectToAction(nameof(Index));
+            }
+
+            _context.Sessions.Remove(session);
+
+            _context.SaveChanges();
+
+            TempData["SuccessMessage"] = $"Sesiunea '{session.Name}' a fost ștearsă cu succes.";
+            return RedirectToAction(nameof(Index));
         }
 
         [HttpGet]

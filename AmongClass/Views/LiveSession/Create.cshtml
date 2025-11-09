@@ -1,7 +1,7 @@
 ﻿@model AmongClass.Models.Session
 
 @{
-    ViewBag.Title = "Creare Sesiune Live";
+    ViewBag.Title = "Creare sesiune live";
 }
 
 <style>
@@ -45,24 +45,16 @@
         font-size: 1.05rem;
     }
 
-    /* 🎯 CORECȚIE AICI: Culoarea textului din input setată la alb-deschis */
     .form-control {
         background: #0f172a;
         border: 2px solid #334155;
         border-radius: 8px;
-        color: #e2e8f0; /* Culoare corectă pentru text vizibil */
+        color: #e2e8f0;
         padding: 0.75rem 1rem;
         width: 100%;
         font-size: 1rem;
         transition: all 0.3s ease;
     }
-
-        .form-control:focus {
-            outline: none;
-            border-color: #10b981;
-            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
-            background: #1e293b;
-        }
 
     .info-box {
         background: rgba(59, 130, 246, 0.1);
@@ -125,7 +117,7 @@
     <div class="create-card">
         <h1 class="create-title">
             <i class="bi bi-plus-circle-fill"></i>
-            Creare Sesiune Live
+            Creare sesiune live
         </h1>
 
         <div class="info-box">
@@ -143,20 +135,19 @@
             <div class="form-group">
                 <label for="Name" class="form-label">
                     <i class="bi bi-pencil-fill"></i>
-                    Numele Sesiunii
+                    Numele sesiunii
                 </label>
                 <input type="text"
                        id="Name"
                        name="Name"
                        class="form-control"
-                       placeholder="Ex: Quiz Matematică - Clasa a 10-a"
                        required />
             </div>
 
             <div class="btn-group">
                 <button type="submit" class="btn btn-submit">
                     <i class="bi bi-check-circle-fill"></i>
-                    Creează Sesiunea
+                    Creează sesiunea
                 </button>
                 <a href="/LiveSession/Index" class="btn btn-cancel">
                     <i class="bi bi-x-circle"></i>
