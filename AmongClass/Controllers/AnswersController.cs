@@ -100,14 +100,44 @@ namespace AmongClass.Controllers
         [HttpPost]
         public async Task<IActionResult> New(Answer answer)
         {
-            if (!ModelState.IsValid) return View(answer);
+            Console.WriteLine($"🔵 New answer POST started for question {answer.QuestionId}");
 
-            answer.Id = Guid.NewGuid();
-            answer.UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
-            db.Answers.Add(answer);
-            await db.SaveChangesAsync();
+            if (!ModelState.IsValid)
+            {
+                Console.WriteLine($"❌ ModelState is invalid:");
+                foreach (var error in ModelState.Values.SelectMany(v => v.Errors))
+                {
+                    Console.WriteLine($"   - {error.ErrorMessage}");
+                }
+                return View(answer);
+            }
 
-            Console.WriteLine($"✅ User answer saved for question {answer.QuestionId}");
+            try
+            {
+                answer.Id = Guid.NewGuid();
+                answer.UserId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
+
+                Console.WriteLine($"🔵 Answer ID: {answer.Id}");
+                Console.WriteLine($"🔵 User ID: {answer.UserId}");
+                Console.WriteLine($"🔵 Question ID: {answer.QuestionId}");
+                Console.WriteLine($"🔵 Answer Text: {(answer.Text != null ? answer.Text.Substring(0, Math.Min(50, answer.Text.Length)) : "null")}...");
+
+                db.Answers.Add(answer);
+                await db.SaveChangesAsync();
+
+                Console.WriteLine($"✅ User answer saved successfully for question {answer.QuestionId}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error saving user answer:");
+                Console.WriteLine($"   Message: {ex.Message}");
+                Console.WriteLine($"   Stack: {ex.StackTrace}");
+                if (ex.InnerException != null)
+                {
+                    Console.WriteLine($"   Inner: {ex.InnerException.Message}");
+                }
+                throw;
+            }
 
             // Generează răspuns AI în fundal - CU SCOPE NOU!
             var questionId = answer.QuestionId;
