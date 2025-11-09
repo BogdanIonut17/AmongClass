@@ -212,7 +212,23 @@
                             <i class="bi bi-chat-dots"></i> Răspunsuri
                         </a>
                     </li>
+                    @if (User.IsInRole("Teacher"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/LiveSession/Index">
+                                <i class="bi bi-broadcast"></i> Sesiuni Live
+                            </a>
+                        </li>
+                    }
 
+                    @if (User.IsInRole("Student"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/LiveSession/Join">
+                                <i class="bi bi-door-open"></i> Alătură-te
+                            </a>
+                        </li>
+                    }
                     @if (SignInManager.IsSignedIn(User))
                     {
                         <li class="nav-item dropdown">

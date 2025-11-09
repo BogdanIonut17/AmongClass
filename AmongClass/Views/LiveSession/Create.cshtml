@@ -1,0 +1,167 @@
+﻿@model AmongClass.Models.Session
+
+@{
+    ViewBag.Title = "Creare Sesiune Live";
+}
+
+<style>
+    .create-container {
+        max-width: 800px;
+        margin: 3rem auto;
+        padding: 0 1rem;
+    }
+
+    .create-card {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 16px;
+        padding: 2.5rem;
+        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+
+    .create-title {
+        color: #f1f5f9;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 2rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+        .create-title i {
+            color: #10b981;
+        }
+
+    .form-group {
+        margin-bottom: 1.5rem;
+    }
+
+    .form-label {
+        color: #cbd5e1;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+        display: block;
+        font-size: 1.05rem;
+    }
+
+    .form-control {
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 8px;
+        color: #f1f5f9;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        font-size: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+            background: #1e293b;
+        }
+
+    .info-box {
+        background: rgba(59, 130, 246, 0.1);
+        border-left: 4px solid #3b82f6;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 2rem;
+        color: #e2e8f0;
+    }
+
+        .info-box h5 {
+            color: #60a5fa;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+
+    .btn-group {
+        display: flex;
+        gap: 1rem;
+        margin-top: 2rem;
+    }
+
+    .btn {
+        padding: 0.75rem 1.5rem;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.05rem;
+    }
+
+    .btn-submit {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        flex: 1;
+    }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+        }
+
+    .btn-cancel {
+        background: #334155;
+        color: #cbd5e1;
+    }
+
+        .btn-cancel:hover {
+            background: #475569;
+            color: #f1f5f9;
+        }
+</style>
+
+<div class="create-container">
+    <div class="create-card">
+        <h1 class="create-title">
+            <i class="bi bi-plus-circle-fill"></i>
+            Creare Sesiune Live
+        </h1>
+
+        <div class="info-box">
+            <h5><i class="bi bi-info-circle-fill"></i> Cum funcționează?</h5>
+            <ul style="margin: 0; padding-left: 1.5rem;">
+                <li>După creare, vei primi un cod unic de 6 caractere</li>
+                <li>Studenții vor folosi acest cod pentru a se alătura sesiunii</li>
+                <li>Vei putea adăuga întrebări și controla sesiunea în timp real</li>
+            </ul>
+        </div>
+
+        <form method="post" action="/LiveSession/Create">
+            @Html.AntiForgeryToken()
+
+            <div class="form-group">
+                <label for="Name" class="form-label">
+                    <i class="bi bi-pencil-fill"></i>
+                    Numele Sesiunii
+                </label>
+                <input type="text"
+                       id="Name"
+                       name="Name"
+                       class="form-control"
+                       placeholder="Ex: Quiz Matematică - Clasa a 10-a"
+                       required />
+            </div>
+
+            <div class="btn-group">
+                <button type="submit" class="btn btn-submit">
+                    <i class="bi bi-check-circle-fill"></i>
+                    Creează Sesiunea
+                </button>
+                <a href="/LiveSession/Index" class="btn btn-cancel">
+                    <i class="bi bi-x-circle"></i>
+                    Anulează
+                </a>
+            </div>
+        </form>
+    </div>
+</div>

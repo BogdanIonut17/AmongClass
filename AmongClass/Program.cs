@@ -1,6 +1,7 @@
 ﻿using AmongClass.Data;
 using AmongClass.Helpers;
 using AmongClass.IRepository;
+using AmongClass.Models;
 using AmongClass.Repository;
 using Mapster;
 using Microsoft.AspNetCore.Identity;

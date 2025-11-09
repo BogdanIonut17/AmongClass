@@ -43,7 +43,7 @@ namespace AmongClass.Controllers
                 var currentUser = await _userManager.GetUserAsync(User);
                 if (currentUser != null)
                 {
-                    answer.UserId = Guid.Parse(currentUser.Id);
+                    answer.UserId = currentUser.Id;
                     db.Answers.Add(answer);
                     db.SaveChanges();
                     return RedirectToAction("Show", "Questions", new { id = answer.QuestionId });

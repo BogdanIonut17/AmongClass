@@ -3,15 +3,19 @@ using AmongClass.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System; // Adăugat pentru Guid.NewGuid()
 
 namespace AmongClass.Controllers
 {
     public class SessionController : Controller
     {
         private readonly ApplicationDbContext _context;
-        private readonly UserManager<IdentityUser<Guid>> _userManager;
 
-        public SessionController(ApplicationDbContext context, UserManager<IdentityUser<Guid>> userManager)
+        // ⚠️ CORECTAT: Folosim UserManager<IdentityUser> standard (PK: string)
+        private readonly UserManager<IdentityUser> _userManager;
+
+        // ⚠️ CORECTAT: Constructorul acceptă UserManager<IdentityUser>
+        public SessionController(ApplicationDbContext context, UserManager<IdentityUser> userManager)
         {
             _context = context;
             _userManager = userManager;
@@ -22,7 +26,10 @@ namespace AmongClass.Controllers
         // ===========================
         public async Task<IActionResult> MySessions()
         {
-            var teacherId = Guid.Parse(_userManager.GetUserId(User)!);
+            // ⚠️ CORECTAT: Obținem ID-ul utilizatorului ca STRING (nu mai este Guid.Parse)
+            var teacherId = _userManager.GetUserId(User)!;
+
+            // Această linie presupune că Session.TeacherId este de tip STRING în model!
             var sessions = await _context.Sessions
                 .Where(s => s.TeacherId == teacherId)
                 //.Include(s => s.Category)
@@ -44,7 +51,8 @@ namespace AmongClass.Controllers
             if (ModelState.IsValid)
             {
                 session.Id = Guid.NewGuid();
-                session.TeacherId = Guid.Parse(_userManager.GetUserId(User)!);
+                // ⚠️ CORECTAT: TeacherId este string
+                session.TeacherId = _userManager.GetUserId(User)!;
                 _context.Sessions.Add(session);
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(MySessions));
@@ -57,7 +65,8 @@ namespace AmongClass.Controllers
         // ===========================
         public async Task<IActionResult> AvailableSessions()
         {
-            var studentId = Guid.Parse(_userManager.GetUserId(User)!);
+            // ⚠️ CORECTAT: StudentId este string
+            var studentId = _userManager.GetUserId(User)!;
 
             // exclude sesiunile la care studentul a dat deja join
             var joinedSessionIds = await _context.SessionStudents
@@ -81,7 +90,8 @@ namespace AmongClass.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Join(Guid sessionId)
         {
-            var studentId = Guid.Parse(_userManager.GetUserId(User)!);
+            // ⚠️ CORECTAT: StudentId este string
+            var studentId = _userManager.GetUserId(User)!;
 
             // verifică dacă deja a dat join
             var exists = await _context.SessionStudents
@@ -92,6 +102,7 @@ namespace AmongClass.Controllers
                 var join = new SessionStudent
                 {
                     SessionId = sessionId,
+                    // StudentId este string
                     StudentId = studentId
                 };
                 _context.SessionStudents.Add(join);
@@ -106,7 +117,8 @@ namespace AmongClass.Controllers
         // ===========================
         public async Task<IActionResult> MyJoinedSessions()
         {
-            var studentId = Guid.Parse(_userManager.GetUserId(User)!);
+            // ⚠️ CORECTAT: StudentId este string
+            var studentId = _userManager.GetUserId(User)!;
 
             var sessions = await _context.SessionStudents
                 .Where(ss => ss.StudentId == studentId)

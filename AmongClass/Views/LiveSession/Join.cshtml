@@ -1,0 +1,191 @@
+﻿@{
+    ViewBag.Title = "Alătură-te Sesiunii";
+}
+
+<style>
+    .join-container {
+        max-width: 600px;
+        margin: 4rem auto;
+        padding: 0 1rem;
+    }
+
+    .join-card {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.4);
+        text-align: center;
+    }
+
+    .join-icon {
+        font-size: 5rem;
+        color: #10b981;
+        margin-bottom: 1.5rem;
+    }
+
+    .join-title {
+        color: #f1f5f9;
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .join-subtitle {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        margin-bottom: 2rem;
+    }
+
+    .code-input {
+        background: #0f172a;
+        border: 3px solid #334155;
+        border-radius: 12px;
+        color: #f1f5f9;
+        padding: 1.25rem;
+        width: 100%;
+        font-size: 2rem;
+        text-align: center;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 8px;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .code-input:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.2);
+            background: #1e293b;
+        }
+
+        .code-input::placeholder {
+            color: #475569;
+            letter-spacing: 4px;
+        }
+
+    .join-btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 1.25rem 2.5rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.3rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.75rem;
+    }
+
+        .join-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(16, 185, 129, 0.5);
+        }
+
+        .join-btn:active {
+            transform: translateY(-1px);
+        }
+
+    .error-message {
+        background: rgba(239, 68, 68, 0.1);
+        border: 2px solid #ef4444;
+        border-radius: 12px;
+        color: #fecaca;
+        padding: 1rem 1.5rem;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-weight: 600;
+    }
+
+    .info-box {
+        background: rgba(59, 130, 246, 0.1);
+        border: 2px solid #3b82f6;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-top: 2rem;
+        text-align: left;
+    }
+
+        .info-box h5 {
+            color: #60a5fa;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .info-box ul {
+            color: #cbd5e1;
+            margin: 0;
+            padding-left: 1.5rem;
+        }
+
+        .info-box li {
+            margin-bottom: 0.5rem;
+        }
+</style>
+
+<div class="join-container">
+    <div class="join-card">
+        <div class="join-icon">
+            <i class="bi bi-door-open-fill"></i>
+        </div>
+
+        <h1 class="join-title">Alătură-te Sesiunii</h1>
+        <p class="join-subtitle">Introdu codul primit de la profesor</p>
+
+        @if (ViewBag.Error != null)
+        {
+            <div class="error-message">
+                <i class="bi bi-exclamation-triangle-fill"></i>
+                <span>@ViewBag.Error</span>
+            </div>
+        }
+
+        <form method="post" action="/LiveSession/Join">
+            @Html.AntiForgeryToken()
+
+            <input type="text"
+                   name="joinCode"
+                   class="code-input"
+                   placeholder="ABC123"
+                   maxlength="6"
+                   required
+                   autofocus />
+
+            <button type="submit" class="join-btn">
+                <i class="bi bi-box-arrow-in-right"></i>
+                Intră în Sesiune
+            </button>
+        </form>
+
+        <div class="info-box">
+            <h5>
+                <i class="bi bi-info-circle-fill"></i>
+                Cum funcționează?
+            </h5>
+            <ul>
+                <li>Primești un cod de 6 caractere de la profesor</li>
+                <li>Introduci codul pentru a te alătura sesiunii</li>
+                <li>Răspunzi la întrebări și votezi răspunsurile AI</li>
+                <li>Acumulezi puncte pentru răspunsuri corecte!</li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Auto-uppercase pentru input
+    document.querySelector('.code-input').addEventListener('input', function(e) {
+        e.target.value = e.target.value.toUpperCase();
+    });
+</script>

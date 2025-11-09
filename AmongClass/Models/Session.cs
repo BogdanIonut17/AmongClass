@@ -10,12 +10,29 @@ namespace AmongClass.Models
 
         public string Name { get; set; }
 
-        public Guid TeacherId { get; set; }
+        public string TeacherId { get; set; }
 
-        public IdentityUser<Guid> Teacher { get; set; }
-        public ICollection<SessionStudent> SessionStudents { get; set; } = new List<SessionStudent>();
+        // Cod unic pentru join (6 caractere)
+        public string JoinCode { get; set; }
 
-        public ICollection<Score> Scores { get; set; } = new List<Score>();
+        // Status sesiune: Active, Inactive, Completed
+        public SessionStatus Status { get; set; } = SessionStatus.Inactive;
+
+        // ID-ul întrebării curente active
+        public Guid? CurrentQuestionId { get; set; }
+
+        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        public IdentityUser Teacher { get; set; }
+        public ICollection<SessionStudent> SessionStudents { get; set; }
+        public ICollection<Score> Scores { get; set; }
+        public ICollection<SessionQuestion> SessionQuestions { get; set; }
     }
 
+    public enum SessionStatus
+    {
+        Inactive,
+        Active,
+        Completed
+    }
 }

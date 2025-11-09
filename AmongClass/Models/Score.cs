@@ -9,12 +9,12 @@ namespace AmongClass.Models
         public Guid Id { get; set; }
 
         public Guid SessionId { get; set; }
-        public Guid StudentId { get; set; }
+        public string StudentId { get; set; }
 
         public int Points { get; set; }
 
         public Session Session { get; set; }
-        public IdentityUser<Guid> Student { get; set; }
+        public IdentityUser Student { get; set; }
     }
 
 }

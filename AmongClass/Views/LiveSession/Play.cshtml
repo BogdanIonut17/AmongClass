@@ -1,0 +1,422 @@
+﻿@model AmongClass.Models.Session
+
+@{
+    ViewBag.Title = "Joacă Live";
+    var studentId = ViewBag.StudentId;
+    var studentScore = Model.Scores.FirstOrDefault();
+}
+
+<style>
+    .play-container {
+        max-width: 1000px;
+        margin: 1rem auto;
+        padding: 0 1rem;
+    }
+
+    .play-header {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        margin-bottom: 2rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        color: white;
+    }
+
+    .session-name {
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .your-score {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 0.75rem 1.5rem;
+        border-radius: 12px;
+        font-size: 1.5rem;
+        font-weight: 700;
+    }
+
+    .status-banner {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 12px;
+        padding: 2rem;
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+        .status-banner.waiting {
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
+        }
+
+        .status-banner.active {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+            animation: pulse-border 2s infinite;
+        }
+
+    @@keyframes pulse-border {
+        0%, 100% {
+            border-color: #10b981;
+        }
+
+        50% {
+            border-color: #059669;
+        }
+    }
+
+    .status-icon {
+        font-size: 4rem;
+        margin-bottom: 1rem;
+    }
+
+    .status-title {
+        color: #f1f5f9;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 0.5rem;
+    }
+
+    .status-subtitle {
+        color: #94a3b8;
+        font-size: 1.1rem;
+    }
+
+    .question-panel {
+        background: #1e293b;
+        border: 2px solid #10b981;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .question-title {
+        color: #f1f5f9;
+        font-size: 1.75rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+    }
+
+    .answer-form textarea {
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 12px;
+        color: #f1f5f9;
+        padding: 1rem;
+        width: 100%;
+        font-size: 1.1rem;
+        min-height: 120px;
+        margin-bottom: 1rem;
+        resize: vertical;
+    }
+
+        .answer-form textarea:focus {
+            outline: none;
+            border-color: #10b981;
+            box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15);
+        }
+
+    .submit-btn {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
+        font-size: 1.1rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(16, 185, 129, 0.4);
+        }
+
+    .answers-section {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 16px;
+        padding: 2rem;
+    }
+
+    .section-title {
+        color: #f1f5f9;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .answer-card {
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        transition: all 0.3s ease;
+    }
+
+        .answer-card:hover {
+            border-color: #3b82f6;
+        }
+
+        .answer-card.your-answer {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
+    .answer-text {
+        color: #e2e8f0;
+        font-size: 1.1rem;
+        margin-bottom: 1rem;
+    }
+
+    .answer-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .vote-btn {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .vote-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+        }
+
+        .vote-btn:disabled {
+            background: #475569;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+    .votes-count {
+        background: #ef4444;
+        color: white;
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.9rem;
+    }
+
+    .badge {
+        padding: 0.25rem 0.75rem;
+        border-radius: 20px;
+        font-weight: 600;
+        font-size: 0.85rem;
+    }
+
+    .badge-success {
+        background: rgba(16, 185, 129, 0.2);
+        color: #10b981;
+    }
+
+    .warning-box {
+        background: rgba(239, 68, 68, 0.1);
+        border-left: 4px solid #ef4444;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        margin-bottom: 1rem;
+        color: #fecaca;
+    }
+
+        .warning-box strong {
+            color: #f87171;
+        }
+</style>
+
+<div class="play-container">
+    <div class="play-header">
+        <div>
+            <div class="session-name">@Model.Name</div>
+            <div style="opacity: 0.9;">
+                <i class="bi bi-people-fill"></i> @Model.SessionStudents.Count jucători
+            </div>
+        </div>
+        <div class="your-score">
+            <i class="bi bi-star-fill"></i>
+            @(studentScore?.Points ?? 0) puncte
+        </div>
+    </div>
+
+    @if (!Model.CurrentQuestionId.HasValue)
+    {
+        <div class="status-banner waiting">
+            <div class="status-icon">⏳</div>
+            <div class="status-title">Așteptăm întrebarea...</div>
+            <div class="status-subtitle">Profesorul va activa următoarea întrebare în curând</div>
+        </div>
+    }
+    else
+    {
+        var currentQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == Model.CurrentQuestionId.Value);
+        if (currentQuestion != null)
+        {
+            var userHasAnswered = currentQuestion.Question.Answers?.Any(a => a.UserId == studentId) ?? false;
+            var userHasVoted = currentQuestion.Question.Answers?
+            .SelectMany(a => a.Votes ?? new List<Vote>())
+            .Any(v => v.UserId == studentId.ToString()) ?? false;
+
+            @if (!userHasAnswered)
+            {
+                <div class="question-panel">
+                    <div class="question-title">
+                        <i class="bi bi-question-circle-fill" style="color: #10b981;"></i>
+                        @currentQuestion.Question.Text
+                    </div>
+
+                    <div class="warning-box">
+                        <strong>⚠️ Atenție!</strong> Colegii tăi vor vota dacă răspunsul tău pare generat de AI. Fii creativ și original!
+                    </div>
+
+                    <form class="answer-form" method="post" action="/LiveSession/SubmitAnswer">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="sessionId" value="@Model.Id" />
+                        <input type="hidden" name="questionId" value="@currentQuestion.QuestionId" />
+
+                        <textarea name="answerText"
+                      placeholder="Scrie răspunsul tău aici... Fii creativ!"
+                      required></textarea>
+
+                        <button type="submit" class="submit-btn">
+                            <i class="bi bi-send-fill"></i>
+                            Trimite Răspunsul
+                        </button>
+                    </form>
+                </div>
+            }
+            else if (!userHasVoted)
+            {
+                <div class="status-banner active">
+                    <div class="status-icon">🤖</div>
+                    <div class="status-title">Găsește AI-ul!</div>
+                    <div class="status-subtitle">Votează răspunsul care crezi că este generat de AI</div>
+                </div>
+
+                <div class="answers-section">
+                    <h2 class="section-title">
+                        <i class="bi bi-collection-fill"></i>
+                        Răspunsuri
+                    </h2>
+
+                    @if (currentQuestion.Question.Answers != null && currentQuestion.Question.Answers.Any())
+                    {
+                        @foreach (var answer in currentQuestion.Question.Answers)
+                        {
+                            var isYourAnswer = answer.UserId == studentId;
+                            var voteCount = answer.Votes?.Count ?? 0;
+
+                            <div class="answer-card @(isYourAnswer ? "your-answer" : "")">
+                                <div class="answer-text">@answer.Text</div>
+
+                                <div class="answer-footer">
+                                    <div>
+                                        @if (isYourAnswer)
+                                        {
+                                            <span class="badge badge-success">
+                                                <i class="bi bi-person-fill"></i> Răspunsul tău
+                                            </span>
+                                        }
+                                        @if (voteCount > 0)
+                                        {
+                                            <span class="votes-count">
+                                                <i class="bi bi-robot"></i> @voteCount voturi
+                                            </span>
+                                        }
+                                    </div>
+
+                                    @if (!isYourAnswer)
+                                    {
+                                        <form method="post" action="/LiveSession/VoteAnswer" style="display: inline;">
+                                            @Html.AntiForgeryToken()
+                                            <input type="hidden" name="sessionId" value="@Model.Id" />
+                                            <input type="hidden" name="answerId" value="@answer.Id" />
+                                            <button type="submit" class="vote-btn">
+                                                🤖 Votează ca AI
+                                            </button>
+                                        </form>
+                                    }
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+            else
+            {
+                <div class="status-banner">
+                    <div class="status-icon">✅</div>
+                    <div class="status-title">Ai terminat!</div>
+                    <div class="status-subtitle">Așteptăm următoarea întrebare</div>
+                </div>
+
+                <div class="answers-section">
+                    <h2 class="section-title">
+                        <i class="bi bi-collection-fill"></i>
+                        Toate Răspunsurile
+                    </h2>
+
+                    @if (currentQuestion.Question.Answers != null && currentQuestion.Question.Answers.Any())
+                    {
+                        @foreach (var answer in currentQuestion.Question.Answers)
+                        {
+                            var isYourAnswer = answer.UserId == studentId;
+                            var voteCount = answer.Votes?.Count ?? 0;
+
+                            <div class="answer-card @(isYourAnswer ? "your-answer" : "")">
+                                <div class="answer-text">@answer.Text</div>
+
+                                <div class="answer-footer">
+                                    <div>
+                                        @if (isYourAnswer)
+                                        {
+                                            <span class="badge badge-success">
+                                                <i class="bi bi-person-fill"></i> Răspunsul tău
+                                            </span>
+                                        }
+                                        @if (voteCount > 0)
+                                        {
+                                            <span class="votes-count">
+                                                <i class="bi bi-robot"></i> @voteCount voturi AI
+                                            </span>
+                                        }
+                                    </div>
+                                </div>
+                            </div>
+                        }
+                    }
+                </div>
+            }
+        }
+    }
+</div>
+
+<script>
+    // Auto-refresh pentru a vedea actualizări
+    setTimeout(function() {
+        location.reload();
+    }, 5000);
+</script>

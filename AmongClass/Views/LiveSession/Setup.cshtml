@@ -1,0 +1,308 @@
+﻿@model AmongClass.Models.Session
+
+@{
+    ViewBag.Title = "Configurare Sesiune";
+    var session = ViewBag.Session as AmongClass.Models.Session;
+    var availableQuestions = ViewBag.AvailableQuestions as IEnumerable<AmongClass.Models.Question>;
+}
+
+<style>
+    .setup-container {
+        max-width: 1400px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .setup-header {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 2px solid #3b82f6;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .setup-title {
+        color: #f1f5f9;
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+    }
+
+    .join-code-display {
+        background: #0f172a;
+        padding: 1.5rem;
+        border-radius: 12px;
+        border: 2px solid #10b981;
+        display: inline-block;
+    }
+
+    .join-code-label {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .join-code-value {
+        color: #10b981;
+        font-size: 2.5rem;
+        font-weight: 700;
+        font-family: 'Courier New', monospace;
+        letter-spacing: 5px;
+    }
+
+    .section {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+    }
+
+    .section-title {
+        color: #f1f5f9;
+        font-size: 1.5rem;
+        font-weight: 700;
+        margin-bottom: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .question-item {
+        background: #0f172a;
+        border: 2px solid #334155;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 1rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: all 0.3s ease;
+    }
+
+        .question-item:hover {
+            border-color: #3b82f6;
+        }
+
+    .question-text {
+        color: #e2e8f0;
+        font-size: 1.1rem;
+        flex: 1;
+    }
+
+    .question-order {
+        background: #3b82f6;
+        color: white;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        margin-right: 1rem;
+    }
+
+    .btn {
+        padding: 0.5rem 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .btn-danger {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+    }
+
+    .btn-primary {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+    }
+
+    .btn-success {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.1rem;
+    }
+
+    .btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    }
+
+    .add-question-form {
+        background: #0f172a;
+        padding: 1.5rem;
+        border-radius: 12px;
+        margin-bottom: 1rem;
+    }
+
+    .form-control {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 8px;
+        color: #f1f5f9;
+        padding: 0.75rem 1rem;
+        width: 100%;
+        font-size: 1rem;
+        margin-bottom: 1rem;
+    }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        color: #64748b;
+    }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin-top: 2rem;
+    }
+</style>
+
+<div class="setup-container">
+    <div class="setup-header">
+        <h1 class="setup-title">⚙️ Configurare: @Model.Name</h1>
+        <div class="join-code-display">
+            <div class="join-code-label">Cod de Acces:</div>
+            <div class="join-code-value">@Model.JoinCode</div>
+        </div>
+    </div>
+
+    <!-- Întrebări Adăugate -->
+    <div class="section">
+        <h2 class="section-title">
+            <i class="bi bi-list-ol"></i>
+            Întrebări în Sesiune (@Model.SessionQuestions.Count)
+        </h2>
+
+        @if (Model.SessionQuestions.Any())
+        {
+            @foreach (var sq in Model.SessionQuestions.OrderBy(q => q.Order))
+            {
+                <div class="question-item">
+                    <div class="question-order">@sq.Order</div>
+                    <div class="question-text">@sq.Question.Text</div>
+                    <div style="display: flex; gap: 0.5rem; align-items: center;">
+                        <span style="color: #94a3b8; margin-right: 1rem;">
+                            <i class="bi bi-clock"></i> @sq.TimeLimit sec
+                        </span>
+                        <form method="post" action="/LiveSession/RemoveQuestion/@sq.Id" style="display: inline;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn btn-danger" onclick="return confirm('Sigur vrei să ștergi această întrebare?')">
+                                <i class="bi bi-trash"></i>
+                                Șterge
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-inbox"></i>
+                <h3>Nu ai adăugat întrebări încă</h3>
+                <p>Adaugă întrebări din lista de mai jos</p>
+            </div>
+        }
+    </div>
+
+    <!-- Adaugă Întrebări Noi -->
+    <div class="section">
+        <h2 class="section-title">
+            <i class="bi bi-plus-circle"></i>
+            Adaugă Întrebări
+        </h2>
+
+        @if (availableQuestions != null && availableQuestions.Any())
+        {
+            @foreach (var question in availableQuestions)
+            {
+                var isAdded = Model.SessionQuestions.Any(sq => sq.QuestionId == question.Id);
+
+                @if (!isAdded)
+                {
+                    <div class="add-question-form">
+                        <div class="question-text" style="margin-bottom: 1rem;">@question.Text</div>
+                        <form method="post" action="/LiveSession/AddQuestion" style="display: flex; gap: 1rem; align-items: end;">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="sessionId" value="@Model.Id" />
+                            <input type="hidden" name="questionId" value="@question.Id" />
+
+                            <div style="flex: 1;">
+                                <label style="color: #94a3b8; font-size: 0.9rem; display: block; margin-bottom: 0.5rem;">
+                                    <i class="bi bi-clock"></i> Timp limită (secunde)
+                                </label>
+                                <input type="number"
+                                       name="timeLimit"
+                                       value="60"
+                                       min="10"
+                                       max="300"
+                                       class="form-control"
+                                       style="margin-bottom: 0;" />
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">
+                                <i class="bi bi-plus-circle"></i>
+                                Adaugă
+                            </button>
+                        </form>
+                    </div>
+                }
+            }
+        }
+        else
+        {
+            <div class="empty-state">
+                <i class="bi bi-question-circle"></i>
+                <h3>Nu există întrebări disponibile</h3>
+                <p>Creează mai întâi niște întrebări în secțiunea Întrebări</p>
+                <a href="/Questions/New" class="btn btn-primary" style="margin-top: 1rem;">
+                    <i class="bi bi-plus-circle"></i>
+                    Creează Întrebare
+                </a>
+            </div>
+        }
+    </div>
+
+    <div class="action-buttons">
+        <a href="/LiveSession/Index" class="btn" style="background: #334155; color: #cbd5e1;">
+            <i class="bi bi-arrow-left"></i>
+            Înapoi
+        </a>
+
+        @if (Model.SessionQuestions.Any())
+        {
+            <form method="post" action="/LiveSession/StartSession/@Model.Id" style="display: inline;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn btn-success">
+                    <i class="bi bi-play-fill"></i>
+                    Start Sesiune LIVE
+                </button>
+            </form>
+        }
+    </div>
+</div>
