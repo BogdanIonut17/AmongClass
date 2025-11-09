@@ -63,7 +63,6 @@ namespace AmongClass.Controllers
             ViewBag.Question = q;
             ViewBag.Answers = q.Answers;
 
-            // Găsește votul utilizatorului curent pentru această întrebare
             if (User.Identity.IsAuthenticated)
             {
                 var currentUser = await _userManager.GetUserAsync(User);
@@ -109,11 +108,43 @@ namespace AmongClass.Controllers
         }
 
         [HttpPost]
+        [ValidateAntiForgeryToken]
         public ActionResult Delete(Guid id)
         {
-            Question q = db.Questions.Find(id);
+            // ✅ SOLUȚIE: Încarcă întrebarea CU toate răspunsurile și voturile
+            Question q = db.Questions
+                .Include(q => q.Answers)
+                    .ThenInclude(a => a.Votes)  // Include și voturile
+                .Include(q => q.SessionQuestions)  // Include și legăturile cu sesiuni
+                .FirstOrDefault(q => q.Id == id);
+
+            if (q == null)
+            {
+                return NotFound();
+            }
+
+            // ✅ Șterge mai întâi voturile pentru fiecare răspuns
+            foreach (var answer in q.Answers.ToList())
+            {
+                // Șterge voturile
+                db.Votes.RemoveRange(answer.Votes);
+            }
+
+            // ✅ Șterge răspunsurile
+            db.Answers.RemoveRange(q.Answers);
+
+            // ✅ Șterge legăturile cu sesiunile (dacă există)
+            if (q.SessionQuestions != null && q.SessionQuestions.Any())
+            {
+                db.SessionQuestions.RemoveRange(q.SessionQuestions);
+            }
+
+            // ✅ Acum șterge întrebarea
             db.Questions.Remove(q);
+
             db.SaveChanges();
+
+            TempData["SuccessMessage"] = "Întrebarea a fost ștearsă cu succes!";
             return RedirectToAction("Index");
         }
     }
