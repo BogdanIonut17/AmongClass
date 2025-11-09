@@ -39,7 +39,7 @@ namespace AmongClass.Controllers
 
                 //return RedirectToAction("Index");
 
-                return RedirectToAction("Ask", "Ollama");
+                return RedirectToAction("Index", "Ollama");
             }
             catch (Exception e)
             {
