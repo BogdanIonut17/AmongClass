@@ -3,6 +3,11 @@
 }
 
 <style>
+    body {
+        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        min-height: 100vh;
+    }
+
     .edit-container {
         max-width: 800px;
         margin: 3rem auto;
@@ -11,98 +16,139 @@
 
     .edit-card {
         background: #1e293b;
-        border: 2px solid #334155;
-        border-radius: 16px;
-        padding: 2.5rem;
-        box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+        border: 2px solid #475569;
+        border-radius: 20px;
+        padding: 3rem;
+        box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     }
 
     .edit-title {
         color: #f1f5f9;
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 700;
-        margin-bottom: 2rem;
+        margin-bottom: 2.5rem;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
+        gap: 1rem;
     }
 
         .edit-title i {
-            color: #3b82f6;
+            color: #f59e0b;
         }
 
     .form-group {
-        margin-bottom: 1.5rem;
+        margin-bottom: 2rem;
     }
 
     .form-label {
-        color: #cbd5e1;
+        color: #f1f5f9;
         font-weight: 600;
-        margin-bottom: 0.5rem;
+        margin-bottom: 0.75rem;
         display: block;
+        font-size: 1.1rem;
     }
 
     .form-control {
         background: #0f172a;
-        border: 2px solid #334155;
-        border-radius: 8px;
+        border: 3px solid #475569;
+        border-radius: 12px;
         color: #f1f5f9;
-        padding: 0.75rem 1rem;
+        padding: 1rem 1.25rem;
         width: 100%;
-        font-size: 1rem;
+        font-size: 1.05rem;
         transition: all 0.3s ease;
+        line-height: 1.6;
     }
 
         .form-control:focus {
             outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            border-color: #f59e0b;
+            box-shadow: 0 0 0 4px rgba(245, 158, 11, 0.2);
             background: #1e293b;
+        }
+
+        .form-control::placeholder {
+            color: #64748b;
         }
 
     textarea.form-control {
         resize: vertical;
-        min-height: 150px;
+        min-height: 200px;
         font-family: inherit;
+    }
+
+    .char-counter {
+        color: #94a3b8;
+        font-size: 0.9rem;
+        margin-top: 0.5rem;
+        text-align: right;
     }
 
     .btn-group {
         display: flex;
         gap: 1rem;
-        margin-top: 2rem;
+        margin-top: 2.5rem;
     }
 
     .btn {
-        padding: 0.75rem 1.5rem;
-        border-radius: 8px;
-        font-weight: 600;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        font-weight: 700;
         border: none;
         cursor: pointer;
         transition: all 0.3s ease;
         text-decoration: none;
         display: inline-flex;
         align-items: center;
-        gap: 0.5rem;
+        justify-content: center;
+        gap: 0.75rem;
+        font-size: 1.05rem;
+        flex: 1;
     }
 
     .btn-primary {
-        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
         color: white;
+        border: 2px solid transparent;
     }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 8px 20px rgba(245, 158, 11, 0.5);
+            border-color: #fbbf24;
+            color: white;
         }
 
     .btn-secondary {
-        background: #334155;
+        background: transparent;
         color: #cbd5e1;
+        border: 2px solid #475569;
     }
 
         .btn-secondary:hover {
-            background: #475569;
+            background: #334155;
             color: #f1f5f9;
+            border-color: #64748b;
+            transform: translateY(-2px);
+        }
+
+    .warning-box {
+        background: rgba(239, 68, 68, 0.1);
+        border: 2px solid #ef4444;
+        border-left: 4px solid #ef4444;
+        border-radius: 12px;
+        padding: 1.25rem;
+        margin-bottom: 2rem;
+        color: #fecaca;
+    }
+
+        .warning-box h5 {
+            color: #f87171;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
         }
 </style>
 
@@ -113,15 +159,31 @@
             Editare Răspuns
         </h1>
 
+        <div class="warning-box">
+            <h5><i class="bi bi-exclamation-triangle-fill"></i> Atenție!</h5>
+            <p>Colegii tăi vor vota din nou după modificare. Asigură-te că răspunsul rămâne original și creativ!</p>
+        </div>
+
         <form method="post" action="/Answers/Edit/@ViewBag.Answer.Id">
             <div class="form-group">
-                <label for="Text" class="form-label">Conținut răspuns</label>
-                <textarea name="Text" id="Text" class="form-control" rows="6" required>@ViewBag.Answer.Text</textarea>
+                <label for="Text" class="form-label">
+                    <i class="bi bi-chat-left-text"></i>
+                    Conținut răspuns
+                </label>
+                <textarea name="Text"
+                          id="Text"
+                          class="form-control"
+                          rows="8"
+                          placeholder="Scrie răspunsul tău aici..."
+                          required>@ViewBag.Answer.Text</textarea>
+                <div class="char-counter">
+                    <span id="charCount">0</span> caractere
+                </div>
             </div>
 
             <div class="btn-group">
                 <button type="submit" class="btn btn-primary">
-                    <i class="bi bi-check-circle"></i> Salvează modificările
+                    <i class="bi bi-check-circle-fill"></i> Salvează modificările
                 </button>
                 <a href="/Questions/Show/@ViewBag.Answer.QuestionId" class="btn btn-secondary">
                     <i class="bi bi-x-circle"></i> Anulează
@@ -130,3 +192,16 @@
         </form>
     </div>
 </div>
+
+<script>
+    // Character counter
+    const textarea = document.getElementById('Text');
+    const charCount = document.getElementById('charCount');
+
+    function updateCount() {
+        charCount.textContent = textarea.value.length;
+    }
+
+    textarea.addEventListener('input', updateCount);
+    updateCount();
+</script>

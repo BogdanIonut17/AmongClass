@@ -3,212 +3,131 @@
 }
 
 <style>
-    .index-container {
-        max-width: 1000px;
+    .my-answers {
+        max-width: 850px;
         margin: 2rem auto;
         padding: 0 1rem;
     }
 
-    .page-header {
-        text-align: center;
-        margin-bottom: 3rem;
+    .header {
+        margin-bottom: 2.5rem;
     }
 
-    .page-title {
-        color: #f1f5f9;
-        font-size: 2.5rem;
-        font-weight: 700;
+    .back {
+        display: inline-block;
+        color: #60a5fa;
+        text-decoration: none;
+        font-size: 0.9rem;
         margin-bottom: 1rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 0.75rem;
     }
 
-        .page-title i {
-            color: #3b82f6;
+        .back:hover {
+            color: #93c5fd;
         }
 
-    .btn-back {
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-        padding: 0.75rem 1.5rem;
-        background: #334155;
-        color: #cbd5e1;
-        border-radius: 8px;
-        text-decoration: none;
+    h1 {
+        color: #f1f5f9;
+        font-size: 1.75rem;
         font-weight: 600;
-        transition: all 0.3s ease;
+        margin-bottom: 0.25rem;
     }
 
-        .btn-back:hover {
-            background: #475569;
-            color: #f1f5f9;
-            transform: translateY(-2px);
-        }
-
-    .answer-card {
-        background: #1e293b;
-        border: 2px solid #334155;
-        border-radius: 12px;
-        padding: 1.75rem;
-        margin-bottom: 1.5rem;
-        transition: all 0.3s ease;
-    }
-
-        .answer-card:hover {
-            border-color: #3b82f6;
-            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.15);
-            transform: translateY(-2px);
-        }
-
-    .question-ref {
+    .subtitle {
         color: #94a3b8;
-        font-size: 0.95rem;
-        margin-bottom: 0.75rem;
-        font-weight: 600;
-        display: flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-        .question-ref i {
-            color: #3b82f6;
-        }
-
-    .answer-text {
-        color: #e2e8f0;
-        font-size: 1.05rem;
-        line-height: 1.6;
-        margin: 1rem 0;
-        padding: 1rem;
-        background: #0f172a;
-        border-radius: 8px;
-        border-left: 3px solid #3b82f6;
-    }
-
-    .card-actions {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 1rem;
-        margin-top: 1.5rem;
-        padding-top: 1rem;
-        border-top: 1px solid #334155;
-    }
-
-    .btn-action {
-        padding: 0.5rem 1rem;
-        border-radius: 6px;
-        font-weight: 600;
-        border: none;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
         font-size: 0.9rem;
     }
 
-    .btn-view {
-        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-        color: white;
+    /* Fiecare răspuns - FOARTE SIMPLU */
+    .item {
+        margin-bottom: 3rem;
     }
 
-        .btn-view:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+    /* Întrebarea */
+    .q-label {
+        color: #64748b;
+        font-size: 0.7rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+        margin-bottom: 0.4rem;
+    }
+
+    .q-text {
+        color: #f1f5f9;
+        font-size: 1.25rem;
+        font-weight: 600;
+        line-height: 1.4;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Răspunsul */
+    .a-text {
+        color: #cbd5e1;
+        font-size: 1rem;
+        line-height: 1.6;
+        margin-bottom: 0.75rem;
+    }
+
+    /* Link discret */
+    .link {
+        display: inline-block;
+        color: #60a5fa;
+        text-decoration: none;
+        font-size: 0.85rem;
+    }
+
+        .link:hover {
+            color: #93c5fd;
         }
 
-    .btn-edit {
-        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
-        color: white;
+    /* Separator */
+    .separator {
+        height: 1px;
+        background: #334155;
+        margin: 2.5rem 0;
     }
 
-        .btn-edit:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(245, 158, 11, 0.4);
-        }
-
-    .btn-delete {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        color: white;
-    }
-
-        .btn-delete:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.4);
-        }
-
-    .actions-right {
-        display: flex;
-        gap: 0.75rem;
-    }
-
-    .empty-state {
+    .empty {
         text-align: center;
-        padding: 4rem 2rem;
+        padding: 3rem 1rem;
         color: #64748b;
     }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
-        }
 </style>
 
-<div class="index-container">
-    <div class="page-header">
-        <h1 class="page-title">
-            <i class="bi bi-chat-left-text-fill"></i>
-            Răspunsuri
-        </h1>
-        <a href="/Questions/Index" class="btn-back">
-            <i class="bi bi-arrow-left"></i> Înapoi la întrebări
-        </a>
+<div class="my-answers">
+    <div class="header">
+        <a href="/Questions/Index" class="back">← Înapoi la întrebări</a>
+        <h1>Răspunsurile mele</h1>
+        <p class="subtitle">Răspunsurile date în sesiuni live</p>
     </div>
 
     @if (ViewBag.Answers != null && ((IEnumerable<dynamic>)ViewBag.Answers).Any())
     {
-        @foreach (var answer in ViewBag.Answers)
+        var answersList = ((IEnumerable<dynamic>)ViewBag.Answers).ToList();
+        for (int i = 0; i < answersList.Count; i++)
         {
-            <div class="answer-card">
-                <div class="question-ref">
-                    <i class="bi bi-question-circle"></i>
-                    @answer.Question.Text
-                </div>
+            var answer = answersList[i];
 
-                <div class="answer-text">
-                    @answer.Text
-                </div>
+            <div class="item">
+                <div class="q-label">ÎNTREBARE</div>
+                <div class="q-text">@answer.Question.Text</div>
 
-                <div class="card-actions">
-                    <a href="/Questions/Show/@answer.QuestionId" class="btn-action btn-view">
-                        <i class="bi bi-eye"></i> Vezi întrebarea
-                    </a>
-                </div>
+                <div class="a-text">@answer.Text</div>
+
+                <a href="/Questions/Show/@answer.QuestionId" class="link">
+                    Vezi detalii →
+                </a>
             </div>
+
+            @if (i < answersList.Count - 1)
+            {
+                <div class="separator"></div>
+            }
         }
     }
     else
     {
-        @if (User.IsInRole("Student"))
-        {
-            <div class="empty-state">
-                <i class="bi bi-inbox"></i>
-            <h3>Nu ai răspuns la nicio întrebare încă</h3>
-            <p>Începe să răspunzi la întrebări pentru a le vedea aici!</p>
-            </div>
-        }
-        else
-        {
-            <div class="empty-state">
-                <i class="bi bi-inbox"></i>
-                <h3>Nu există răspunsuri la nicio întrebare încă</h3>
-            </div>
-        }
+        <div class="empty">
+            <p>Nu ai răspuns la nicio întrebare încă</p>
+        </div>
     }
 </div>

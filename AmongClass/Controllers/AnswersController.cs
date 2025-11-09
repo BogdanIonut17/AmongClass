@@ -53,12 +53,15 @@ namespace AmongClass.Controllers
             }
         }
 
+        [Authorize]
         public IActionResult Index()
         {
+            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier).Value;
             var answers = db.Answers
                 .Include(a => a.Question)
                 .Include(a => a.Votes)
-                .Where(a => a.UserId != AI_USER_ID); // Excludem răspunsurile AI
+                .Where(a => a.UserId == userId) // Doar răspunsurile user-ului curent
+                .OrderByDescending(a => a.Question.Id);
             ViewBag.Answers = answers;
             return View();
         }

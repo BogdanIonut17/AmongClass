@@ -1,9 +1,8 @@
 ﻿@model AmongClass.Models.Session
 
 @{
-    ViewBag.Title = "Joacă live";
+    ViewBag.Title = "Joacă Live";
     var studentId = ViewBag.StudentId as string;
-    // Utilizează noul ViewBag care conține scorul studentului (sau null)
     var studentScore = ViewBag.StudentScore as AmongClass.Models.Score;
 }
 
@@ -13,6 +12,7 @@
         margin: 1rem auto;
         padding: 0 1rem;
     }
+
     .play-header {
         background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
         border-radius: 16px;
@@ -41,8 +41,8 @@
     .status-banner {
         background: #1e293b;
         border: 2px solid #334155;
-        border-radius: 12px;
-        padding: 2rem;
+        border-radius: 16px;
+        padding: 3rem 2rem;
         text-align: center;
         margin-bottom: 2rem;
     }
@@ -52,6 +52,11 @@
             background: rgba(245, 158, 11, 0.05);
         }
 
+        .status-banner.completed {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
+        }
+
         .status-banner.active {
             border-color: #10b981;
             background: rgba(16, 185, 129, 0.05);
@@ -59,31 +64,57 @@
         }
 
     @@keyframes pulse-border {
-        0%, 100% {
-            border-color: #10b981;
-        }
+        0%, 100%
 
-        50% {
-            border-color: #059669;
-        }
+    {
+        border-color: #10b981;
+    }
+
+    50% {
+        border-color: #059669;
+    }
+
     }
 
     .status-icon {
-        font-size: 4rem;
+        font-size: 5rem;
         margin-bottom: 1rem;
     }
 
     .status-title {
         color: #f1f5f9;
-        font-size: 2rem;
+        font-size: 2.5rem;
         font-weight: 700;
         margin-bottom: 0.5rem;
     }
 
     .status-subtitle {
         color: #94a3b8;
-        font-size: 1.1rem;
+        font-size: 1.2rem;
     }
+
+    .btn-exit {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 1rem 2rem;
+        border-radius: 12px;
+        text-decoration: none;
+        font-weight: 700;
+        font-size: 1.1rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.75rem;
+        margin-top: 2rem;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+        .btn-exit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.5);
+            border-color: #60a5fa;
+            color: white;
+        }
 
     .question-panel {
         background: #1e293b;
@@ -246,182 +277,233 @@
         .warning-box strong {
             color: #f87171;
         }
+
+    .final-score-card {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        border-radius: 16px;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        text-align: center;
+        color: white;
+    }
+
+    .final-score-label {
+        font-size: 1.2rem;
+        opacity: 0.9;
+        margin-bottom: 0.5rem;
+    }
+
+    .final-score-value {
+        font-size: 4rem;
+        font-weight: 700;
+    }
 </style>
 
 <div class="play-container">
-    <div class="play-header">
-        <div>
-            <div class="session-name">@Model.Name</div>
-            <div style="opacity: 0.9;">
-                <i class="bi bi-people-fill"></i> @Model.SessionStudents.Count jucători
-            </div>
-        </div>
-        <div class="your-score">
+    @if (Model.Status == SessionStatus.Completed)
+    {
+        <!-- SESIUNE ÎNCHEIATĂ -->
+        <div class="status-banner completed">
+            <div class="status-icon">🏆</div>
+            <div class="status-title">Sesiune Încheiată!</div>
+            <div class="status-subtitle">Mulțumim pentru participare!</div>
+
             @if (studentScore != null)
             {
-                <p>Puncte: @studentScore.Points</p>
+                <div class="final-score-card" style="margin: 2rem auto; max-width: 400px;">
+                    <div class="final-score-label">Scorul tău final</div>
+                    <div class="final-score-value">@studentScore.Points</div>
+                    <div style="opacity: 0.9; margin-top: 0.5rem;">puncte</div>
+                </div>
             }
-            else
-            {
-                <p>Scorul nu a fost inițializat încă.</p>
-            }
-        </div>
-    </div>
 
-    @if (!Model.CurrentQuestionId.HasValue)
-    {
-        <div class="status-banner waiting">
-            <div class="status-icon">⏳</div>
-            <div class="status-title">Așteptăm întrebarea...</div>
-            <div class="status-subtitle">Profesorul va activa următoarea întrebare în curând</div>
+            <a href="/Questions/Index" class="btn-exit">
+                <i class="bi bi-house-fill"></i>
+                Înapoi la Întrebări
+            </a>
         </div>
     }
     else
     {
-        var currentQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == Model.CurrentQuestionId.Value);
-        if (currentQuestion != null)
+        <!-- SESIUNE ACTIVĂ -->
+        <div class="play-header">
+            <div>
+                <div class="session-name">@Model.Name</div>
+                <div style="opacity: 0.9;">
+                    <i class="bi bi-people-fill"></i> @Model.SessionStudents.Count jucători
+                </div>
+            </div>
+            <div class="your-score">
+                @if (studentScore != null)
+                {
+                    <div>Puncte: @studentScore.Points</div>
+                }
+                else
+                {
+                    <div>Puncte: 0</div>
+                }
+            </div>
+        </div>
+
+        @if (!Model.CurrentQuestionId.HasValue)
         {
-            var userHasAnswered = currentQuestion.Question.Answers?.Any(a => a.UserId == studentId) ?? false;
-            var userHasVoted = currentQuestion.Question.Answers?
-            .SelectMany(a => a.Votes ?? new List<Vote>())
-            .Any(v => v.UserId == studentId.ToString()) ?? false;
-
-            @if (!userHasAnswered)
+            <div class="status-banner waiting">
+                <div class="status-icon">⏳</div>
+                <div class="status-title">Așteptăm întrebarea...</div>
+                <div class="status-subtitle">Profesorul va activa următoarea întrebare în curând</div>
+            </div>
+        }
+        else
+        {
+            var currentQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == Model.CurrentQuestionId.Value);
+            if (currentQuestion != null)
             {
-                <div class="question-panel">
-                    <div class="question-title">
-                        <i class="bi bi-question-circle-fill" style="color: #10b981;"></i>
-                        @currentQuestion.Question.Text
-                    </div>
+                var userHasAnswered = currentQuestion.Question.Answers?.Any(a => a.UserId == studentId) ?? false;
+                var userHasVoted = currentQuestion.Question.Answers?
+                .SelectMany(a => a.Votes ?? new List<Vote>())
+                .Any(v => v.UserId == studentId.ToString()) ?? false;
 
-                    <div class="warning-box">
-                        <strong>⚠️ Atenție!</strong> Colegii tăi vor vota dacă răspunsul tău pare generat de AI. Fii creativ și original!
-                    </div>
+                @if (!userHasAnswered)
+                {
+                    <div class="question-panel">
+                        <div class="question-title">
+                            <i class="bi bi-question-circle-fill" style="color: #10b981;"></i>
+                            @currentQuestion.Question.Text
+                        </div>
 
-                    <form class="answer-form" method="post" action="/LiveSession/SubmitAnswer">
-                        @Html.AntiForgeryToken()
-                        <input type="hidden" name="sessionId" value="@Model.Id" />
-                        <input type="hidden" name="questionId" value="@currentQuestion.QuestionId" />
+                        <div class="warning-box">
+                            <strong>⚠️ Atenție!</strong> Colegii tăi vor vota dacă răspunsul tău pare generat de AI. Fii creativ și original!
+                        </div>
 
-                        <textarea name="answerText"
+                        <form class="answer-form" method="post" action="/LiveSession/SubmitAnswer">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="sessionId" value="@Model.Id" />
+                            <input type="hidden" name="questionId" value="@currentQuestion.QuestionId" />
+
+                            <textarea name="answerText"
                       placeholder="Scrie răspunsul tău aici... Fii creativ!"
                       required></textarea>
 
-                        <button type="submit" class="submit-btn">
-                            <i class="bi bi-send-fill"></i>
-                            Trimite răspunsul
-                        </button>
-                    </form>
-                </div>
-            }
-            else if (!userHasVoted)
-            {
-                <div class="status-banner active">
-                    <div class="status-icon">🤖</div>
-                    <div class="status-title">Găsește AI-ul!</div>
-                    <div class="status-subtitle">Votează răspunsul care crezi că este generat de AI</div>
-                </div>
+                            <button type="submit" class="submit-btn">
+                                <i class="bi bi-send-fill"></i>
+                                Trimite Răspunsul
+                            </button>
+                        </form>
+                    </div>
+                }
+                else if (!userHasVoted)
+                {
+                    <div class="status-banner active">
+                        <div class="status-icon">🤖</div>
+                        <div class="status-title">Găsește AI-ul!</div>
+                        <div class="status-subtitle">Votează răspunsul care crezi că este generat de AI</div>
+                    </div>
 
-                <div class="answers-section">
-                    <h2 class="section-title">
-                        <i class="bi bi-collection-fill"></i>
-                        Răspunsuri
-                    </h2>
+                    <div class="answers-section">
+                        <h2 class="section-title">
+                            <i class="bi bi-collection-fill"></i>
+                            Răspunsuri
+                        </h2>
 
-                    @if (currentQuestion.Question.Answers != null && currentQuestion.Question.Answers.Any())
-                    {
-                        @foreach (var answer in currentQuestion.Question.Answers)
+                        @if (currentQuestion.Question.Answers != null && currentQuestion.Question.Answers.Any())
                         {
-                            var isYourAnswer = answer.UserId == studentId;
-                            var voteCount = answer.Votes?.Count ?? 0;
+                            @foreach (var answer in currentQuestion.Question.Answers)
+                            {
+                                var isYourAnswer = answer.UserId == studentId;
+                                var voteCount = answer.Votes?.Count ?? 0;
 
-                            <div class="answer-card @(isYourAnswer ? "your-answer" : "")">
-                                <div class="answer-text">@answer.Text</div>
+                                <div class="answer-card @(isYourAnswer ? "your-answer" : "")">
+                                    <div class="answer-text">@answer.Text</div>
 
-                                <div class="answer-footer">
-                                    <div>
-                                        @if (isYourAnswer)
+                                    <div class="answer-footer">
+                                        <div>
+                                            @if (isYourAnswer)
+                                            {
+                                                <span class="badge badge-success">
+                                                    <i class="bi bi-person-fill"></i> Răspunsul tău
+                                                </span>
+                                            }
+                                            @if (voteCount > 0)
+                                            {
+                                                <span class="votes-count">
+                                                    <i class="bi bi-robot"></i> @voteCount voturi
+                                                </span>
+                                            }
+                                        </div>
+
+                                        @if (!isYourAnswer)
                                         {
-                                            <span class="badge badge-success">
-                                                <i class="bi bi-person-fill"></i> Răspunsul tău
-                                            </span>
-                                        }
-                                        @if (voteCount > 0)
-                                        {
-                                            <span class="votes-count">
-                                                <i class="bi bi-robot"></i> @voteCount voturi
-                                            </span>
-                                        }
-                                    </div>
-
-                                    @if (!isYourAnswer)
-                                    {
-                                        <form method="post" action="/LiveSession/VoteAnswer" style="display: inline;">
-                                            @Html.AntiForgeryToken()
-                                            <input type="hidden" name="sessionId" value="@Model.Id" />
-                                            <input type="hidden" name="answerId" value="@answer.Id" />
-                                            <button type="submit" class="vote-btn">
-                                                🤖 Votează ca AI
-                                            </button>
-                                        </form>
-                                    }
-                                </div>
-                            </div>
-                        }
-                    }
-                </div>
-            }
-            else
-            {
-                <div class="status-banner">
-                    <div class="status-icon">✅</div>
-                    <div class="status-title">Ai terminat!</div>
-                    <div class="status-subtitle">Așteptăm următoarea întrebare</div>
-                </div>
-
-                <div class="answers-section">
-                    <h2 class="section-title">
-                        <i class="bi bi-collection-fill"></i>
-                        Toate răspunsurile
-                    </h2>
-
-                    @if (currentQuestion.Question.Answers != null && currentQuestion.Question.Answers.Any())
-                    {
-                        @foreach (var answer in currentQuestion.Question.Answers)
-                        {
-                            var isYourAnswer = answer.UserId == studentId;
-                            var voteCount = answer.Votes?.Count ?? 0;
-
-                            <div class="answer-card @(isYourAnswer ? "your-answer" : "")">
-                                <div class="answer-text">@answer.Text</div>
-
-                                <div class="answer-footer">
-                                    <div>
-                                        @if (isYourAnswer)
-                                        {
-                                            <span class="badge badge-success">
-                                                <i class="bi bi-person-fill"></i> Răspunsul tău
-                                            </span>
-                                        }
-                                        @if (voteCount > 0)
-                                        {
-                                            <span class="votes-count">
-                                                <i class="bi bi-robot"></i> @voteCount voturi AI
-                                            </span>
+                                            <form method="post" action="/LiveSession/VoteAnswer" style="display: inline;">
+                                                @Html.AntiForgeryToken()
+                                                <input type="hidden" name="sessionId" value="@Model.Id" />
+                                                <input type="hidden" name="answerId" value="@answer.Id" />
+                                                <button type="submit" class="vote-btn">
+                                                    🤖 Votează ca AI
+                                                </button>
+                                            </form>
                                         }
                                     </div>
                                 </div>
-                            </div>
+                            }
                         }
-                    }
-                </div>
+                    </div>
+                }
+                else
+                {
+                    <div class="status-banner">
+                        <div class="status-icon">✅</div>
+                        <div class="status-title">Ai terminat!</div>
+                        <div class="status-subtitle">Așteptăm următoarea întrebare</div>
+                    </div>
+
+                    <div class="answers-section">
+                        <h2 class="section-title">
+                            <i class="bi bi-collection-fill"></i>
+                            Toate Răspunsurile
+                        </h2>
+
+                        @if (currentQuestion.Question.Answers != null && currentQuestion.Question.Answers.Any())
+                        {
+                            @foreach (var answer in currentQuestion.Question.Answers)
+                            {
+                                var isYourAnswer = answer.UserId == studentId;
+                                var voteCount = answer.Votes?.Count ?? 0;
+
+                                <div class="answer-card @(isYourAnswer ? "your-answer" : "")">
+                                    <div class="answer-text">@answer.Text</div>
+
+                                    <div class="answer-footer">
+                                        <div>
+                                            @if (isYourAnswer)
+                                            {
+                                                <span class="badge badge-success">
+                                                    <i class="bi bi-person-fill"></i> Răspunsul tău
+                                                </span>
+                                            }
+                                            @if (voteCount > 0)
+                                            {
+                                                <span class="votes-count">
+                                                    <i class="bi bi-robot"></i> @voteCount voturi AI
+                                                </span>
+                                            }
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        }
+                    </div>
+                }
             }
         }
     }
 </div>
 
-<script>
-    setTimeout(function() {
-        location.reload();
-    }, 5000);
-</script>
+@if (Model.Status == SessionStatus.Active)
+{
+    <script>
+        // Auto-refresh doar dacă sesiunea e activă
+        setTimeout(function() {
+            location.reload();
+        }, 5000);
+    </script>
+}

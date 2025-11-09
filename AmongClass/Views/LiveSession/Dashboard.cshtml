@@ -109,22 +109,11 @@
         transition: all 0.3s ease;
     }
 
+        /* Cel mai votat - mai discret și profesional */
         .answer-item.most-voted {
-            border-color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-            animation: pulse-glow 2s infinite;
+            border-color: #f59e0b;
+            background: rgba(245, 158, 11, 0.05);
         }
-
-    @@keyframes pulse-glow {
-        0%, 100% {
-            box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
-        }
-
-        50% {
-            box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
-        }
-    }
 
     .answer-header {
         display: flex;
@@ -145,41 +134,35 @@
         line-height: 1.6;
     }
 
+    /* Badge-uri pentru voturi - mai simple */
     .votes-badge {
-        background: #ef4444;
-        color: white;
+        background: rgba(239, 68, 68, 0.15);
+        color: #fca5a5;
+        border: 1px solid #ef4444;
         padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 700;
-        font-size: 1rem;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
     }
 
         .votes-badge.highest {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-            font-size: 1.2rem;
-            padding: 0.75rem 1.25rem;
-            animation: pulse-badge 1.5s infinite;
+            background: rgba(245, 158, 11, 0.15);
+            color: #fbbf24;
+            border: 1px solid #f59e0b;
+            font-size: 0.95rem;
         }
-
-    @@keyframes pulse-badge {
-        0%, 100% {
-            transform: scale(1);
-        }
-
-        50% {
-            transform: scale(1.05);
-        }
-    }
 
     .ai-badge {
-        background: #facc15;
-        color: #000;
+        background: rgba(250, 204, 21, 0.2);
+        color: #fbbf24;
+        border: 1px solid #facc15;
         padding: 0.5rem 1rem;
-        border-radius: 20px;
-        font-weight: 700;
+        border-radius: 8px;
+        font-weight: 600;
+        font-size: 0.9rem;
     }
 
     .timer-display {
@@ -198,13 +181,16 @@
         }
 
     @@keyframes pulse-timer {
-        0%, 100% {
-            opacity: 1;
-        }
+        0%, 100%
 
-        50% {
-            opacity: 0.7;
-        }
+    {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.7;
+    }
+
     }
 
     .stats-panel {
@@ -336,16 +322,16 @@
                                         }
                                     </div>
                                     <div>
-                                        @if (isMostVoted)
+                                        @if (isMostVoted && voteCount > 0)
                                         {
                                             <span class="votes-badge highest">
-                                                <i class="bi bi-fire"></i> @voteCount voturi - CEL MAI SUSPECTAT
+                                                @voteCount voturi
                                             </span>
                                         }
                                         else if (voteCount > 0)
                                         {
                                             <span class="votes-badge">
-                                                <i class="bi bi-robot"></i> @voteCount voturi
+                                                @voteCount voturi
                                             </span>
                                         }
                                     </div>
@@ -396,34 +382,34 @@
 </div>
 
 <script>
-@{
-    if (currentQuestion != null)
-    {
-        var sessionQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == currentQuestion.Id);
-        if (sessionQuestion?.ActivatedAt != null)
-        {
-            var elapsed = (DateTime.UtcNow - sessionQuestion.ActivatedAt.Value).TotalSeconds;
-            var remaining = Math.Max(0, sessionQuestion.TimeLimit - elapsed);
-            var isLastQuestion = !Model.SessionQuestions.Any(sq => sq.Order > sessionQuestion.Order);
-            var remainingMs = (int)(remaining * 1000);
-            var isLastJs = isLastQuestion.ToString().ToLower();
+    @{
+            if (currentQuestion != null)
+            {
+                    var sessionQuestion = Model.SessionQuestions.FirstOrDefault(sq => sq.QuestionId == currentQuestion.Id);
+                    if (sessionQuestion?.ActivatedAt != null)
+                    {
+                            var elapsed = (DateTime.UtcNow - sessionQuestion.ActivatedAt.Value).TotalSeconds;
+                            var remaining = Math.Max(0, sessionQuestion.TimeLimit - elapsed);
+                            var isLastQuestion = !Model.SessionQuestions.Any(sq => sq.Order > sessionQuestion.Order);
+                            var remainingMs = (int)(remaining * 1000);
+                            var isLastJs = isLastQuestion.ToString().ToLower();
 
-            @:var remainingMs = @remainingMs;
-            @:var isLast = @isLastJs;
+                            @:var remainingMs = @remainingMs;
+                            @:var isLast = @isLastJs;
 
-            @:if (remainingMs > 0 && remainingMs < 600000) {
-            @:    setTimeout(function() {
-            @:        if (isLast) {
-            @:            document.getElementById('endSessionManualForm').submit();
-            @:        } else {
-            @:            document.getElementById('nextQuestionForm').submit();
-            @:        }
-            @:    }, remainingMs);
-            @:}
-        }
+                            @:if (remainingMs > 0 && remainingMs < 600000) {
+                            @:    setTimeout(function() {
+                            @:        if (isLast) {
+                            @:            document.getElementById('endSessionManualForm').submit();
+                            @:        } else {
+                            @:            document.getElementById('nextQuestionForm').submit();
+                            @:        }
+                            @:    }, remainingMs);
+                            @:}
+                    }
+            }
     }
-}
-    setTimeout(function() {
-        location.reload();
-    }, 3000);
+        setTimeout(function() {
+            location.reload();
+        }, 3000);
 </script>

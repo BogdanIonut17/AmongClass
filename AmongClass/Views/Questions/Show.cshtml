@@ -1,193 +1,323 @@
 ﻿@model AmongClass.Models.Question
 
 @{
-    ViewBag.Title = "Quiz";
-    bool hasVoted = ViewBag.UserVote != null;
+    ViewData["Title"] = ViewBag.Question.Text;
 }
 
 <style>
-    .quiz-header {
-        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
-        border: 2px solid #475569;
-        border-radius: 20px;
-        padding: 2rem;
-        margin-bottom: 2rem;
+    .show-container {
+        max-width: 1000px;
+        margin: 2rem auto;
+        padding: 0 1rem;
     }
 
-    .answer-card {
+    .question-header {
+        background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        border: 2px solid #3b82f6;
+        border-left: 5px solid #3b82f6;
+        border-radius: 12px;
+        padding: 2rem;
+        margin-bottom: 3rem;
+        box-shadow: 0 5px 20px rgba(59, 130, 246, 0.2);
+    }
+
+    .question-title {
+        color: #f1f5f9;
+        font-size: 2rem;
+        font-weight: 700;
+        margin: 0;
+        display: flex;
+        align-items: flex-start;
+        gap: 0.75rem;
+    }
+
+        .question-title i {
+            color: #60a5fa;
+            margin-top: 0.25rem;
+        }
+
+    .section-header {
+        color: #cbd5e1;
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin: 2rem 0 1.5rem 0;
+        padding-bottom: 0.75rem;
+        border-bottom: 2px solid #334155;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .section-header i {
+            color: #10b981;
+        }
+
+    .info-banner {
+        background: rgba(59, 130, 246, 0.1);
+        border: 2px solid #3b82f6;
+        border-left: 4px solid #3b82f6;
+        border-radius: 12px;
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+        color: #93c5fd;
+    }
+
+        .info-banner h5 {
+            color: #60a5fa;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+    .answer-item {
         background: #1e293b;
         border: 2px solid #334155;
-        border-radius: 16px;
-        padding: 1.5rem;
+        border-radius: 12px;
+        padding: 1.75rem;
         margin-bottom: 1.5rem;
         transition: all 0.3s ease;
     }
 
-        .answer-card:hover {
-            transform: translateY(-3px);
+        .answer-item:hover {
             border-color: #3b82f6;
-            box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 5px 20px rgba(59, 130, 246, 0.15);
+            transform: translateY(-2px);
         }
 
-        .answer-card.voted {
-            border-color: #ef4444;
-            background: rgba(239, 68, 68, 0.1);
+        .answer-item.my-answer {
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.05);
         }
 
-    .vote-btn {
-        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        border: none;
-        border-radius: 12px;
-        padding: 0.75rem 1.5rem;
-        color: white;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
+            .answer-item.my-answer:hover {
+                border-color: #10b981;
+                box-shadow: 0 5px 20px rgba(16, 185, 129, 0.3);
+            }
+
+    .answer-text {
+        color: #e2e8f0;
+        font-size: 1.05rem;
+        line-height: 1.7;
+        margin-bottom: 1.5rem;
     }
 
-        .vote-btn:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 5px 20px rgba(239, 68, 68, 0.4);
-        }
+    .answer-actions {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid #334155;
+    }
 
-        .vote-btn:disabled {
-            background: #475569;
-            cursor: not-allowed;
-        }
+    .answer-badges {
+        display: flex;
+        gap: 0.75rem;
+        align-items: center;
+    }
 
-    .vote-count {
+    .badge {
+        padding: 0.5rem 1rem;
+        border-radius: 20px;
+        font-weight: 700;
+        font-size: 0.85rem;
         display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-        background: rgba(239, 68, 68, 0.2);
-        border: 2px solid #ef4444;
-        border-radius: 20px;
-        padding: 0.5rem 1rem;
-        font-weight: 700;
-        color: #fecaca;
     }
 
-    .quiz-header h1 {
-        color: #f1f5f9;
-        font-size: 2rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
+    .badge-ai {
+        background: linear-gradient(135deg, #facc15 0%, #eab308 100%);
+        color: #000;
     }
 
-    .answer-card div {
-        color: #e2e8f0;
+    .badge-mine {
+        background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        color: white;
     }
 
-    .info-box {
-        background: rgba(59, 130, 246, 0.1);
-        border-left: 4px solid #3b82f6;
-        padding: 1rem 1.5rem;
-        border-radius: 8px;
+    .ai-answer {
+        border-color: #facc15;
+        background: rgba(250, 204, 21, 0.05);
+    }
+
+    .btn-back {
+        background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+        color: white;
+        padding: 0.75rem 1.5rem;
+        font-size: 1.05rem;
+        border-radius: 12px;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 600;
+        border: 2px solid transparent;
+        transition: all 0.3s ease;
+    }
+
+        .btn-back:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+            border-color: #60a5fa;
+            color: white;
+        }
+
+    .empty-state {
+        text-align: center;
+        padding: 3rem 2rem;
+        background: #1e293b;
+        border: 2px dashed #334155;
+        border-radius: 12px;
+        color: #64748b;
+    }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        margin-top: 3rem;
+        justify-content: center;
+    }
+
+    .teacher-actions {
+        background: #1e293b;
+        border: 2px solid #334155;
+        border-radius: 12px;
+        padding: 1.5rem;
         margin-bottom: 2rem;
-        color: #e2e8f0;
+        display: flex;
+        gap: 1rem;
     }
 
-        .info-box h5 {
-            color: #60a5fa;
+    .btn-edit-q {
+        background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+        color: white;
+        padding: 0.65rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 600;
+        border: 2px solid transparent;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-edit-q:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(245, 158, 11, 0.5);
+            border-color: #fbbf24;
+            color: white;
+        }
+
+    .btn-delete-q {
+        background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+        color: white;
+        padding: 0.65rem 1.25rem;
+        border-radius: 10px;
+        font-weight: 600;
+        border: 2px solid transparent;
+        border: none;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        transition: all 0.3s ease;
+    }
+
+        .btn-delete-q:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(239, 68, 68, 0.5);
+            border-color: #f87171;
+            color: white;
         }
 </style>
 
-<a href="/Questions/Index" class="btn btn-secondary mb-4">
-    <i class="bi bi-arrow-left"></i> Înapoi
-</a>
-@if (User.IsInRole("Teacher"))
-{
-    <a class="btn btn-sm btn-warning" href="/Questions/Edit/@ViewBag.Question.Id">
-        <i class="bi bi-pencil"></i> Editează întrebarea
-    </a>
-    <form method="post" action="/Questions/Delete/@ViewBag.Question.Id" style="display: inline;">
-        <button class="btn btn-sm btn-danger" type="submit">
-            <i class="bi bi-trash"></i> Șterge întrebarea
-        </button>
-    </form>
-}
-
-<div class="quiz-header">
-    <h1>@ViewBag.Question.Text</h1>
-    <div>
-        <span class="badge bg-info">@ViewBag.Answers.Count răspunsuri</span>
+<div class="show-container">
+    <div class="question-header">
+        <h1 class="question-title">
+            <i class="bi bi-question-circle-fill"></i>
+            <span>@ViewBag.Question.Text</span>
+        </h1>
     </div>
-</div>
 
-@if (User.IsInRole("Student") && !hasVoted)
-{
-    <div class="info-box">
-        <h5><i class="bi bi-info-circle-fill"></i> Găsește AI-ul!</h5>
-        <p class="mb-0">Votează răspunsul care crezi că este generat de AI. Dacă ghicești corect, primești +10 puncte!</p>
-    </div>
-}
-@if (ViewBag.Answers != null && ViewBag.Answers.Count > 0)
-{
-    <h4 class="mb-4" style="color: #f1f5f9;">
-        <i class="bi bi-collection"></i> Răspunsuri
-        @if (User.IsInRole("Student") && hasVoted)
-        {
-            <span class="ms-2 badge bg-danger">Ai votat deja</span>
-        }
-    </h4>
-
-    @foreach (var answer in ViewBag.Answers)
+    @if (User.IsInRole("Teacher"))
     {
-        int voteCount = answer.Votes?.Count ?? 0;
-        bool isUserAnswer = User.IsInRole("Student") && answer.UserId.ToString() == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-        bool isVotedAnswer = hasVoted && ViewBag.UserVote.AnswerId == answer.Id;
-
-        <div class="answer-card @(isVotedAnswer ? "voted" : "")">
-            <div class="mb-3">
-                @if (isUserAnswer)
-                {
-                    <span class="badge bg-info me-2">
-                        <i class="bi bi-person-fill"></i> Răspunsul tău
-                    </span>
-                }
-                @if (voteCount > 0)
-                {
-                    <span class="vote-count">
-                        <i class="bi bi-robot"></i>
-                        <span>@voteCount voturi AI</span>
-                    </span>
-                }
-            </div>
-
-            <div style="font-size: 1.1rem; margin-bottom: 1rem; color: #f1f5f9;">
-                @answer.Text
-            </div>
-
-            <div class="d-flex justify-content-between">
-                <div>
-                    @if (isUserAnswer)
-                    {
-                        <a class="btn btn-sm btn-warning" href="/Answers/Edit/@answer.Id">
-                            <i class="bi bi-pencil"></i> Editează
-                        </a>
-                        <form method="post" action="/Answers/Delete/@answer.Id" style="display: inline;">
-                            <button class="btn btn-sm btn-danger" type="submit"> 
-                                <i class="bi bi-trash"></i> Șterge
-                            </button>
-                        </form>
-                    }
-                </div>
-                <div>
-                    @if (User.IsInRole("Student") && !isUserAnswer)
-                    {
-                        <form method="post" action="/Votes/Vote" style="display: inline;">
-                            <input type="hidden" name="answerId" value="@answer.Id" />
-                            <button type="submit" class="vote-btn" @(hasVoted ? "disabled" : "")>
-                                🤖 @(isVotedAnswer ? "Votat" : "Votează ca AI")
-                            </button>
-                        </form>
-                    }
-                </div>
-            </div>
+        <div class="teacher-actions">
+            <a href="/Questions/Edit/@ViewBag.Question.Id" class="btn-edit-q">
+                <i class="bi bi-pencil-fill"></i> Editează întrebarea
+            </a>
+            <form method="post" action="/Questions/Delete/@ViewBag.Question.Id" style="display: inline;">
+                @Html.AntiForgeryToken()
+                <button type="submit" class="btn-delete-q"
+                        onclick="return confirm('Sigur vrei să ștergi această întrebare?')">
+                    <i class="bi bi-trash-fill"></i> Șterge întrebarea
+                </button>
+            </form>
         </div>
     }
-}
-else
-{
-    <p class="text-light">Nu există răspunsuri încă.</p>
-}
+
+    <div class="info-banner">
+        <h5><i class="bi bi-info-circle-fill"></i> Informație</h5>
+        <p style="margin: 0;">Răspunsurile la această întrebare pot fi date doar în cadrul sesiunilor live. Profesorii pot adăuga întrebarea în sesiuni prin meniul "Sesiuni Live".</p>
+    </div>
+
+    <h2 class="section-header">
+        <i class="bi bi-chat-dots-fill"></i>
+        Răspunsuri (@(ViewBag.Answers?.Count ?? 0))
+    </h2>
+
+    @if (ViewBag.Answers != null && ViewBag.Answers.Count > 0)
+    {
+        @foreach (var answer in ViewBag.Answers)
+        {
+            bool isAI = string.IsNullOrEmpty(answer.UserId) || answer.UserId == Guid.Empty.ToString() || answer.UserId == "11111111-1111-1111-1111-111111111111";
+            bool isMine = User.Identity.IsAuthenticated && answer.UserId == User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+            <div class="answer-item @(isAI ? "ai-answer" : "") @(isMine ? "my-answer" : "")">
+                <div class="answer-text">
+                    @answer.Text
+                </div>
+
+                <div class="answer-actions">
+                    <div class="answer-badges">
+                        @if (isAI)
+                        {
+                            <span class="badge badge-ai">
+                                <i class="bi bi-robot"></i> AI
+                            </span>
+                        }
+                        @if (isMine && !isAI)
+                        {
+                            <span class="badge badge-mine">
+                                <i class="bi bi-person-fill"></i> Răspunsul tău
+                            </span>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    else
+    {
+        <div class="empty-state">
+            <i class="bi bi-inbox"></i>
+            <h3>Nu există răspunsuri încă</h3>
+            <p>Răspunsurile vor fi adăugate în sesiunile live.</p>
+        </div>
+    }
+
+    <div class="action-buttons">
+        <a href="/Questions/Index" class="btn-back">
+            <i class="bi bi-arrow-left"></i> Înapoi la întrebări
+        </a>
+    </div>
+</div>
