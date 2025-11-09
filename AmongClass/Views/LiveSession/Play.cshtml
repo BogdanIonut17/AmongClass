@@ -1,7 +1,7 @@
 ﻿@model AmongClass.Models.Session
 
 @{
-    ViewBag.Title = "Joacă Live";
+    ViewBag.Title = "Joacă live";
     var studentId = ViewBag.StudentId as string;
     // Utilizează noul ViewBag care conține scorul studentului (sau null)
     var studentScore = ViewBag.StudentScore as AmongClass.Models.Score;
@@ -259,16 +259,12 @@
         <div class="your-score">
             @if (studentScore != null)
             {
-                // Afișează scorul:
                 <p>Puncte: @studentScore.Points</p>
             }
             else
             {
-                // Cazul în care scorul lipsește:
                 <p>Scorul nu a fost inițializat încă.</p>
             }
-            @* <i class="bi bi-star-fill"></i>
-            @(studentScore?.Points ?? 0) puncte *@
         </div>
     </div>
 
@@ -313,7 +309,7 @@
 
                         <button type="submit" class="submit-btn">
                             <i class="bi bi-send-fill"></i>
-                            Trimite Răspunsul
+                            Trimite răspunsul
                         </button>
                     </form>
                 </div>
@@ -386,7 +382,7 @@
                 <div class="answers-section">
                     <h2 class="section-title">
                         <i class="bi bi-collection-fill"></i>
-                        Toate Răspunsurile
+                        Toate răspunsurile
                     </h2>
 
                     @if (currentQuestion.Question.Answers != null && currentQuestion.Question.Answers.Any())
@@ -425,7 +421,6 @@
 </div>
 
 <script>
-    // Auto-refresh pentru a vedea actualizări
     setTimeout(function() {
         location.reload();
     }, 5000);

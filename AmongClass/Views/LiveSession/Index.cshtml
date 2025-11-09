@@ -259,7 +259,7 @@
                         </a>
                         <form method="post" action="/LiveSession/EndSession/@session.Id" style="display: inline;">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-danger" onclick="return confirm('Sigur vrei să închei sesiunea?')">
+                            <button type="submit" class="btn btn-danger">
                                 <i class="bi bi-stop-fill"></i>
                                 Încheie sesiunea
                             </button>
@@ -277,8 +277,7 @@
                     {
                         <form method="post" action="/LiveSession/Delete/@session.Id" style="display: inline;">
                             @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-danger"
-                                    onclick="return confirm('Sigur vrei să ștergi această sesiune?')">
+                            <button type="submit" class="btn btn-danger">
                                 <i class="bi bi-trash"></i> Șterge
                             </button>
                         </form>

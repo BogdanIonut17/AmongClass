@@ -17,7 +17,6 @@
             <tr>
                 <td>@session.Name</td>
                 <td>@session.Teacher?.UserName</td>
-                @* <td>@session.Category?.Name</td> *@
                 <td>
                     <form asp-action="Join" method="post">
                         <input type="hidden" name="sessionId" value="@session.Id" />

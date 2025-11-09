@@ -1,7 +1,7 @@
 ﻿@model AmongClass.Models.Session
 
 @{
-    ViewBag.Title = "Rezultate Sesiune";
+    ViewBag.Title = "Rezultate sesiune";
 }
 
 <style>
@@ -212,7 +212,7 @@
 
 <div class="results-container">
     <div class="results-header">
-        <h1 class="results-title">🏆 Rezultate Finale</h1>
+        <h1 class="results-title">🏆 Rezultate finale</h1>
         <div class="session-name">@Model.Name</div>
         <div class="session-meta">
             Sesiune încheiată • @Model.SessionStudents.Count participanți • @Model.SessionQuestions.Count întrebări
@@ -265,7 +265,7 @@
     <div class="leaderboard-card">
         <h2 class="leaderboard-title">
             <i class="bi bi-robot"></i>
-            Cei Mai Suspectați ca AI
+            Cei mai suspectați ca AI
         </h2>
 
         @if (suspectLeaderboard.Any())
@@ -316,19 +316,19 @@
     <div class="details-section">
         <h3 class="details-title">
             <i class="bi bi-info-circle"></i>
-            Detalii Sesiune
+            Detalii sesiune
         </h3>
 
         <div class="row">
             <div class="col-md-4">
                 <div class="detail-item">
-                    <div class="detail-label">Total Participanți</div>
+                    <div class="detail-label">Total participanți</div>
                     <div class="detail-value">@Model.SessionStudents.Count</div>
                 </div>
             </div>
             <div class="col-md-4">
                 <div class="detail-item">
-                    <div class="detail-label">Total Întrebări</div>
+                    <div class="detail-label">Total întrebări</div>
                     <div class="detail-value">@Model.SessionQuestions.Count</div>
                 </div>
             </div>
@@ -344,7 +344,7 @@
     <div class="text-center mt-4">
         <a href="/LiveSession/Index" class="btn-back">
             <i class="bi bi-arrow-left"></i>
-            Înapoi la Sesiuni
+            Înapoi la sesiuni
         </a>
     </div>
 </div>
