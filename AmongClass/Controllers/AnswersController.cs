@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json;
 
 namespace AmongClass.Controllers
 {
@@ -14,6 +15,7 @@ namespace AmongClass.Controllers
         private readonly RagService _rag;
         private readonly UserManager<IdentityUser> _userManager;
         private readonly IServiceProvider _serviceProvider;
+        private readonly IHttpClientFactory _httpClientFactory;
 
         // GUID constant pentru AI - va fi același în toată aplicația
         public static readonly string AI_USER_ID = "11111111-1111-1111-1111-111111111111";
@@ -22,12 +24,14 @@ namespace AmongClass.Controllers
             ApplicationDbContext context,
             UserManager<IdentityUser> userManager,
             RagService rag,
-            IServiceProvider serviceProvider)
+            IServiceProvider serviceProvider,
+            IHttpClientFactory httpClientFactory)
         {
             db = context;
             _userManager = userManager;
             _rag = rag;
             _serviceProvider = serviceProvider;
+            _httpClientFactory = httpClientFactory;
 
             // Asigură-te că user-ul AI există în baza de date
             EnsureAiUserExists().Wait();
@@ -76,6 +80,60 @@ namespace AmongClass.Controllers
             {
                 Console.WriteLine($"❌ Error ensuring AI user exists: {ex.Message}");
                 Console.WriteLine($"Stack: {ex.StackTrace}");
+            }
+        }
+
+        // Metodă pentru a genera răspuns AI folosind LLM (ca în OllamaController)
+        private async Task<string> GenerateAiResponseWithLLM(string questionText, RagService ragService, HttpClient httpClient)
+        {
+            try
+            {
+                Console.WriteLine($"🧠 Getting relevant rules for: {questionText}");
+
+                // Obține regulile relevante din RAG
+                string rules = await ragService.GetRelevantRules(questionText);
+
+                Console.WriteLine($"📚 Rules retrieved (length: {rules.Length})");
+
+                // Construiește prompt-ul complet
+                string fullPrompt = $"Rules:\n{rules}\n\nQuestion: {questionText}";
+
+                Console.WriteLine($"📝 Full prompt created (length: {fullPrompt.Length})");
+
+                // Creează request-ul pentru Ollama
+                var request = new
+                {
+                    model = "qwen2.5",
+                    prompt = fullPrompt,
+                    stream = false
+                };
+
+                Console.WriteLine($"🚀 Sending request to Ollama...");
+
+                // Apelează Ollama
+                var response = await httpClient.PostAsJsonAsync("http://localhost:11434/api/generate", request);
+
+                if (!response.IsSuccessStatusCode)
+                {
+                    var error = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"❌ Ollama Error: {error}");
+                    return $"Error generating AI response: {error}";
+                }
+
+                // Parse răspunsul
+                var json = await response.Content.ReadAsStringAsync();
+                using var doc = JsonDocument.Parse(json);
+                string modelResponse = doc.RootElement.GetProperty("response").GetString();
+
+                Console.WriteLine($"✅ LLM response received (length: {modelResponse?.Length ?? 0})");
+
+                return modelResponse ?? "No response from AI";
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"❌ Error in GenerateAiResponseWithLLM: {ex.Message}");
+                Console.WriteLine($"   Stack: {ex.StackTrace}");
+                return $"Error generating AI response: {ex.Message}";
             }
         }
 
@@ -139,7 +197,7 @@ namespace AmongClass.Controllers
                 throw;
             }
 
-            // Generează răspuns AI în fundal - CU SCOPE NOU!
+            // Generează răspuns AI în fundal - CU SCOPE NOU și LLM CALL!
             var questionId = answer.QuestionId;
             _ = Task.Run(async () =>
             {
@@ -154,6 +212,8 @@ namespace AmongClass.Controllers
                     using var scope = _serviceProvider.CreateScope();
                     var scopedDb = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
                     var scopedRag = scope.ServiceProvider.GetRequiredService<RagService>();
+                    var scopedHttpClientFactory = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>();
+                    var httpClient = scopedHttpClientFactory.CreateClient();
 
                     // Verifică dacă AI-ul a răspuns deja
                     var existingAiAnswer = await scopedDb.Answers
@@ -174,12 +234,11 @@ namespace AmongClass.Controllers
                     }
 
                     Console.WriteLine($"📝 Question text: {question.Text}");
-                    Console.WriteLine($"🧠 Calling RAG service...");
 
-                    // Generează răspunsul AI
-                    string aiResponseText = await scopedRag.GetRelevantRules(question.Text);
+                    // IMPORTANT: Generează răspunsul AI folosind LLM (ca în OllamaController)
+                    string aiResponseText = await GenerateAiResponseWithLLM(question.Text, scopedRag, httpClient);
 
-                    Console.WriteLine($"✅ RAG response received: {aiResponseText.Substring(0, Math.Min(100, aiResponseText.Length))}...");
+                    Console.WriteLine($"✅ AI response generated: {aiResponseText.Substring(0, Math.Min(100, aiResponseText.Length))}...");
 
                     // Creează răspunsul AI
                     var aiAnswer = new Answer
