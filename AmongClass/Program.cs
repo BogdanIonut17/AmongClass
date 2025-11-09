@@ -34,6 +34,8 @@ builder.Services.AddMapster();
 builder.Services.AddHttpClient();
 //builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 
+
+
 var app = builder.Build();
 
 //custom - Seed roles
@@ -54,6 +56,16 @@ using (var scope = app.Services.CreateScope())
         var logger = serviceProvider.GetRequiredService<ILogger<Program>>();
         logger.LogError(ex, "An error occurred while seeding the database with roles.");
     }
+}
+
+// kjieiuogipeouenuieiog
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var userManager = services.GetRequiredService<UserManager<IdentityUser>>();
+
+    // Creează user-ul AI la pornirea aplicației
+    await DbInitializer.SeedAiUser(userManager);
 }
 
 //var rag = app.Services.GetRequiredService<RagService>();
